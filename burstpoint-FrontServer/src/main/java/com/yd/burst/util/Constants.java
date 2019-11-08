@@ -13,10 +13,6 @@ public class Constants {
     public static final int CURRENT_GAME = 0;   // 当前局
     public static final int NEXT_GAME = 1;  //下一局
 
-    public static final int BET_STATUS_MANUAL = 0;   // 注单状态：手动
-    public static final int BET_STATUS_AUTO = 1;   // 注单状态：自动
-    public static final int BET_STATUS_CANCEL = 2;   // 注单状态：取消
-
 
     public static final int WAIT_START = 0;   // 等待6S
     public static final int GAMING = 1;   // 游戏中
