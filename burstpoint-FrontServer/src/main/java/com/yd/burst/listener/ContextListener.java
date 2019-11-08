@@ -1,6 +1,5 @@
 package com.yd.burst.listener;
 
-import com.yd.burst.service.GameContextThread;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +21,7 @@ public class ContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent e) {
-        new Thread(new GameContextThread()).start();
+        //new Thread(new GameContextThread()).start();
         logger.info("-------游戏初始化线程启动--------");
     }
 

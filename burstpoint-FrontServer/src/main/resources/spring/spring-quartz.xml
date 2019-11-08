@@ -20,10 +20,6 @@
         <task:scheduled ref="configRefreshJob" method="execute" cron="0 0/5 * * * ?"/>
     </task:scheduled-tasks>
 
-    <bean id="payDetailRefreshJob" class="com.yd.burst.quartz.PayDetailRefreshJob"></bean>
-	<task:scheduled-tasks scheduler="myScheduler">
-		<task:scheduled ref="payDetailRefreshJob" method="execute" cron="*/30 * * * * ?"/>
-	</task:scheduled-tasks>
 
     &lt;!&ndash;定义任务调度器线程池的大小&ndash;&gt;
     <task:scheduler id="myScheduler" pool-size="10"/>
