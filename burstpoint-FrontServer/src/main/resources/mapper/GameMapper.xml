@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.GameMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.Game">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="issue_no" jdbcType="BIGINT" property="issueNo" />
+    <result column="end_time" jdbcType="VARCHAR" property="endTime" />
+    <result column="burst_point" jdbcType="DOUBLE" property="burstPoint" />
+    <result column="total_amount" jdbcType="DOUBLE" property="totalAmount" />
+    <result column="player_profit" jdbcType="DOUBLE" property="playerProfit" />
+    <result column="platform_profit" jdbcType="DOUBLE" property="platformProfit" />
+    <result column="game_mode" jdbcType="VARCHAR" property="gameMode" />
+    <result column="game_status" jdbcType="VARCHAR" property="gameStatus" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="total_bonus_pool" jdbcType="DOUBLE" property="totalBonusPool" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, issue_no, end_time, burst_point, total_amount, player_profit, platform_profit,
+    game_mode, game_status, create_time, create_by, update_time, update_by, total_bonus_pool
+  </sql>
+
+  <select id="selectAllBurstPoints" resultType="com.yd.burst.model.Game">
+    select issue_no, burst_point from bd_game where end_time is not null ORDER BY issue_no DESC limit 20;
+  </select>
+
+  <select id="selectLastGame" resultType="com.yd.burst.model.Game" parameterType="java.lang.Integer">
+      select * from bd_game order by issue_no DESC limit 1;
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from bd_game where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="com.yd.burst.model.Game">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert ignore into bd_game (issue_no, end_time, burst_point, game_mode, game_status, create_time,
+      create_by, update_time, update_by, total_bonus_pool )
+    values (#{issueNo,jdbcType=BIGINT}, #{endTime,jdbcType=VARCHAR}, #{burstPoint,jdbcType=DOUBLE},
+        #{gameMode,jdbcType=VARCHAR}, #{gameStatus,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR},
+        #{createBy,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+        #{totalBonusPool,jdbcType=DOUBLE})
+  </insert>
+
+  <select id="selectByIssueNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from bd_game where issue_no = #{issueNo}
+  </select>
+
+
+  <update id="updateByIssueNo" parameterType="com.yd.burst.model.Game">
+      update bd_game set
+      player_profit = #{playerProfit,jdbcType=DOUBLE},
+      platform_profit = #{platformProfit,jdbcType=DOUBLE},
+      <if test="burstPoint != null">
+         burst_point = #{burstPoint,jdbcType=DOUBLE},
+      </if>
+      end_time = #{endTime,jdbcType=VARCHAR}
+      where issue_no = #{issueNo,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateTotalAmountByIssueNo" parameterType="com.yd.burst.model.Game">
+      update bd_game set total_amount = #{totalAmount,jdbcType=DOUBLE}
+      where issue_no = #{issueNo,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectHistory" resultType="com.yd.burst.model.dto.GameDto">
+    select issue_no, burst_point from bd_game where end_time is not null ORDER BY issue_no DESC limit 200;
+  </select>
+
+</mapper>

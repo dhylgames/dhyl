@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.AgentCommissionConfigMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.AgentCommissionConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="proportion" jdbcType="DOUBLE" property="proportion" />
+    <result column="amount" jdbcType="DOUBLE" property="amount" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="column_name" jdbcType="VARCHAR" property="columnName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, proportion, amount, name, column_name
+  </sql>
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from bd_agent_commission_config-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">-->
+    <!--delete from bd_agent_commission_config-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</delete>-->
+  <!--<insert id="insert" parameterType="com.yd.burst.model.AgentCommissionConfig">-->
+    <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+      <!--SELECT LAST_INSERT_ID()-->
+    <!--</selectKey>-->
+    <!--insert into bd_agent_commission_config (proportion, amount, name, -->
+      <!--column_name)-->
+    <!--values (#{proportion,jdbcType=DOUBLE}, #{amount,jdbcType=DOUBLE}, #{name,jdbcType=VARCHAR}, -->
+      <!--#{columnName,jdbcType=VARCHAR})-->
+  <!--</insert>-->
+  <!--<insert id="insertSelective" parameterType="com.yd.burst.model.AgentCommissionConfig">-->
+    <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+      <!--SELECT LAST_INSERT_ID()-->
+    <!--</selectKey>-->
+    <!--insert into bd_agent_commission_config-->
+    <!--<trim prefix="(" suffix=")" suffixOverrides=",">-->
+      <!--<if test="proportion != null">-->
+        <!--proportion,-->
+      <!--</if>-->
+      <!--<if test="amount != null">-->
+        <!--amount,-->
+      <!--</if>-->
+      <!--<if test="name != null">-->
+        <!--name,-->
+      <!--</if>-->
+      <!--<if test="columnName != null">-->
+        <!--column_name,-->
+      <!--</if>-->
+    <!--</trim>-->
+    <!--<trim prefix="values (" suffix=")" suffixOverrides=",">-->
+      <!--<if test="proportion != null">-->
+        <!--#{proportion,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="amount != null">-->
+        <!--#{amount,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="name != null">-->
+        <!--#{name,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="columnName != null">-->
+        <!--#{columnName,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</trim>-->
+  <!--</insert>-->
+  <!--<update id="updateByPrimaryKeySelective" parameterType="com.yd.burst.model.AgentCommissionConfig">-->
+    <!--update bd_agent_commission_config-->
+    <!--<set>-->
+      <!--<if test="proportion != null">-->
+        <!--proportion = #{proportion,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="amount != null">-->
+        <!--amount = #{amount,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="name != null">-->
+        <!--name = #{name,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="columnName != null">-->
+        <!--column_name = #{columnName,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</set>-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+  <!--<update id="updateByPrimaryKey" parameterType="com.yd.burst.model.AgentCommissionConfig">-->
+    <!--update bd_agent_commission_config-->
+    <!--set proportion = #{proportion,jdbcType=DOUBLE},-->
+      <!--amount = #{amount,jdbcType=DOUBLE},-->
+      <!--name = #{name,jdbcType=VARCHAR},-->
+      <!--column_name = #{columnName,jdbcType=VARCHAR}-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+</mapper>

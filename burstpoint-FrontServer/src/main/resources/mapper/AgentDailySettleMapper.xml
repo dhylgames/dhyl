@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.AgentDailySettleMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.AgentDailySettle">
+    <id column="date" jdbcType="DATE" property="date" />
+    <id column="userId" jdbcType="VARCHAR" property="userid" />
+    <result column="selfIncome" jdbcType="DOUBLE" property="selfincome" />
+    <result column="sumIncome" jdbcType="DOUBLE" property="sumincome" />
+    <result column="directExpense" jdbcType="DOUBLE" property="directexpense" />
+    <result column="indirectExpense" jdbcType="DOUBLE" property="indirectexpense" />
+    <result column="proportion" jdbcType="DOUBLE" property="proportion" />
+    <result column="failTimes" jdbcType="INTEGER" property="failtimes" />
+    <result column="successTimes" jdbcType="INTEGER" property="successtimes" />
+    <result column="updateTime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="updateBy" jdbcType="VARCHAR" property="updateby" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    date, userId, selfIncome, sumIncome, directExpense, indirectExpense, proportion, 
+    failTimes, successTimes, updateTime, updateBy
+  </sql>
+  <!--<select id="selectByPrimaryKey" parameterType="com.yd.burst.model.AgentDailySettleKey" resultMap="BaseResultMap">-->
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from bd_agent_daily_settle-->
+    <!--where date = #{date,jdbcType=DATE}-->
+      <!--and userId = #{userid,jdbcType=VARCHAR}-->
+  <!--</select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="com.yd.burst.model.AgentDailySettleKey">-->
+    <!--delete from bd_agent_daily_settle-->
+    <!--where date = #{date,jdbcType=DATE}-->
+      <!--and userId = #{userid,jdbcType=VARCHAR}-->
+  <!--</delete>-->
+  <!--<insert id="insert" parameterType="com.yd.burst.model.AgentDailySettle">-->
+    <!--insert into bd_agent_daily_settle (date, userId, selfIncome, -->
+      <!--sumIncome, directExpense, indirectExpense, -->
+      <!--proportion, failTimes, successTimes, -->
+      <!--updateTime, updateBy)-->
+    <!--values (#{date,jdbcType=DATE}, #{userid,jdbcType=VARCHAR}, #{selfincome,jdbcType=DOUBLE}, -->
+      <!--#{sumincome,jdbcType=DOUBLE}, #{directexpense,jdbcType=DOUBLE}, #{indirectexpense,jdbcType=DOUBLE}, -->
+      <!--#{proportion,jdbcType=DOUBLE}, #{failtimes,jdbcType=INTEGER}, #{successtimes,jdbcType=INTEGER}, -->
+      <!--#{updatetime,jdbcType=TIMESTAMP}, #{updateby,jdbcType=VARCHAR})-->
+  <!--</insert>-->
+  <!--<insert id="insertSelective" parameterType="com.yd.burst.model.AgentDailySettle">-->
+    <!--insert into bd_agent_daily_settle-->
+    <!--<trim prefix="(" suffix=")" suffixOverrides=",">-->
+      <!--<if test="date != null">-->
+        <!--date,-->
+      <!--</if>-->
+      <!--<if test="userid != null">-->
+        <!--userId,-->
+      <!--</if>-->
+      <!--<if test="selfincome != null">-->
+        <!--selfIncome,-->
+      <!--</if>-->
+      <!--<if test="sumincome != null">-->
+        <!--sumIncome,-->
+      <!--</if>-->
+      <!--<if test="directexpense != null">-->
+        <!--directExpense,-->
+      <!--</if>-->
+      <!--<if test="indirectexpense != null">-->
+        <!--indirectExpense,-->
+      <!--</if>-->
+      <!--<if test="proportion != null">-->
+        <!--proportion,-->
+      <!--</if>-->
+      <!--<if test="failtimes != null">-->
+        <!--failTimes,-->
+      <!--</if>-->
+      <!--<if test="successtimes != null">-->
+        <!--successTimes,-->
+      <!--</if>-->
+      <!--<if test="updatetime != null">-->
+        <!--updateTime,-->
+      <!--</if>-->
+      <!--<if test="updateby != null">-->
+        <!--updateBy,-->
+      <!--</if>-->
+    <!--</trim>-->
+    <!--<trim prefix="values (" suffix=")" suffixOverrides=",">-->
+      <!--<if test="date != null">-->
+        <!--#{date,jdbcType=DATE},-->
+      <!--</if>-->
+      <!--<if test="userid != null">-->
+        <!--#{userid,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="selfincome != null">-->
+        <!--#{selfincome,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="sumincome != null">-->
+        <!--#{sumincome,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="directexpense != null">-->
+        <!--#{directexpense,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="indirectexpense != null">-->
+        <!--#{indirectexpense,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="proportion != null">-->
+        <!--#{proportion,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="failtimes != null">-->
+        <!--#{failtimes,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="successtimes != null">-->
+        <!--#{successtimes,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="updatetime != null">-->
+        <!--#{updatetime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <!--<if test="updateby != null">-->
+        <!--#{updateby,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</trim>-->
+  <!--</insert>-->
+  <!--<update id="updateByPrimaryKeySelective" parameterType="com.yd.burst.model.AgentDailySettle">-->
+    <!--update bd_agent_daily_settle-->
+    <!--<set>-->
+      <!--<if test="selfincome != null">-->
+        <!--selfIncome = #{selfincome,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="sumincome != null">-->
+        <!--sumIncome = #{sumincome,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="directexpense != null">-->
+        <!--directExpense = #{directexpense,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="indirectexpense != null">-->
+        <!--indirectExpense = #{indirectexpense,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="proportion != null">-->
+        <!--proportion = #{proportion,jdbcType=DOUBLE},-->
+      <!--</if>-->
+      <!--<if test="failtimes != null">-->
+        <!--failTimes = #{failtimes,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="successtimes != null">-->
+        <!--successTimes = #{successtimes,jdbcType=INTEGER},-->
+      <!--</if>-->
+      <!--<if test="updatetime != null">-->
+        <!--updateTime = #{updatetime,jdbcType=TIMESTAMP},-->
+      <!--</if>-->
+      <!--<if test="updateby != null">-->
+        <!--updateBy = #{updateby,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</set>-->
+    <!--where date = #{date,jdbcType=DATE}-->
+      <!--and userId = #{userid,jdbcType=VARCHAR}-->
+  <!--</update>-->
+  <!--<update id="updateByPrimaryKey" parameterType="com.yd.burst.model.AgentDailySettle">-->
+    <!--update bd_agent_daily_settle-->
+    <!--set selfIncome = #{selfincome,jdbcType=DOUBLE},-->
+      <!--sumIncome = #{sumincome,jdbcType=DOUBLE},-->
+      <!--directExpense = #{directexpense,jdbcType=DOUBLE},-->
+      <!--indirectExpense = #{indirectexpense,jdbcType=DOUBLE},-->
+      <!--proportion = #{proportion,jdbcType=DOUBLE},-->
+      <!--failTimes = #{failtimes,jdbcType=INTEGER},-->
+      <!--successTimes = #{successtimes,jdbcType=INTEGER},-->
+      <!--updateTime = #{updatetime,jdbcType=TIMESTAMP},-->
+      <!--updateBy = #{updateby,jdbcType=VARCHAR}-->
+    <!--where date = #{date,jdbcType=DATE}-->
+      <!--and userId = #{userid,jdbcType=VARCHAR}-->
+  <!--</update>-->
+</mapper>

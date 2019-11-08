@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.MailMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.Mail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="announcement_title" jdbcType="VARCHAR" property="announcementTitle" />
+    <result column="announcement_content" jdbcType="VARCHAR" property="announcementContent" />
+    <result column="announcement_status" jdbcType="VARCHAR" property="announcementStatus" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+  <!--<sql id="Base_Column_List">-->
+    <!--id, announcement_title, announcement_content, announcement_status, create_time, create_by, -->
+    <!--update_time, update_by-->
+  <!--</sql>-->
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">-->
+    <!--select -->
+    <!--<include refid="Base_Column_List" />-->
+    <!--from bd_mail-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</select>-->
+  <!--<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">-->
+    <!--delete from bd_mail-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</delete>-->
+  <!--<insert id="insert" parameterType="com.yd.burst.model.Mail">-->
+    <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+      <!--SELECT LAST_INSERT_ID()-->
+    <!--</selectKey>-->
+    <!--insert into bd_mail (announcement_title, announcement_content, -->
+      <!--announcement_status, create_time, create_by, -->
+      <!--update_time, update_by)-->
+    <!--values (#{announcementTitle,jdbcType=VARCHAR}, #{announcementContent,jdbcType=VARCHAR}, -->
+      <!--#{announcementStatus,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR}, -->
+      <!--#{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR})-->
+  <!--</insert>-->
+  <!--<insert id="insertSelective" parameterType="com.yd.burst.model.Mail">-->
+    <!--<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">-->
+      <!--SELECT LAST_INSERT_ID()-->
+    <!--</selectKey>-->
+    <!--insert into bd_mail-->
+    <!--<trim prefix="(" suffix=")" suffixOverrides=",">-->
+      <!--<if test="announcementTitle != null">-->
+        <!--announcement_title,-->
+      <!--</if>-->
+      <!--<if test="announcementContent != null">-->
+        <!--announcement_content,-->
+      <!--</if>-->
+      <!--<if test="announcementStatus != null">-->
+        <!--announcement_status,-->
+      <!--</if>-->
+      <!--<if test="createTime != null">-->
+        <!--create_time,-->
+      <!--</if>-->
+      <!--<if test="createBy != null">-->
+        <!--create_by,-->
+      <!--</if>-->
+      <!--<if test="updateTime != null">-->
+        <!--update_time,-->
+      <!--</if>-->
+      <!--<if test="updateBy != null">-->
+        <!--update_by,-->
+      <!--</if>-->
+    <!--</trim>-->
+    <!--<trim prefix="values (" suffix=")" suffixOverrides=",">-->
+      <!--<if test="announcementTitle != null">-->
+        <!--#{announcementTitle,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="announcementContent != null">-->
+        <!--#{announcementContent,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="announcementStatus != null">-->
+        <!--#{announcementStatus,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="createTime != null">-->
+        <!--#{createTime,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="createBy != null">-->
+        <!--#{createBy,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="updateTime != null">-->
+        <!--#{updateTime,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="updateBy != null">-->
+        <!--#{updateBy,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</trim>-->
+  <!--</insert>-->
+  <!--<update id="updateByPrimaryKeySelective" parameterType="com.yd.burst.model.Mail">-->
+    <!--update bd_mail-->
+    <!--<set>-->
+      <!--<if test="announcementTitle != null">-->
+        <!--announcement_title = #{announcementTitle,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="announcementContent != null">-->
+        <!--announcement_content = #{announcementContent,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="announcementStatus != null">-->
+        <!--announcement_status = #{announcementStatus,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="createTime != null">-->
+        <!--create_time = #{createTime,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="createBy != null">-->
+        <!--create_by = #{createBy,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="updateTime != null">-->
+        <!--update_time = #{updateTime,jdbcType=VARCHAR},-->
+      <!--</if>-->
+      <!--<if test="updateBy != null">-->
+        <!--update_by = #{updateBy,jdbcType=VARCHAR},-->
+      <!--</if>-->
+    <!--</set>-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+  <!--<update id="updateByPrimaryKey" parameterType="com.yd.burst.model.Mail">-->
+    <!--update bd_mail-->
+    <!--set announcement_title = #{announcementTitle,jdbcType=VARCHAR},-->
+      <!--announcement_content = #{announcementContent,jdbcType=VARCHAR},-->
+      <!--announcement_status = #{announcementStatus,jdbcType=VARCHAR},-->
+      <!--create_time = #{createTime,jdbcType=VARCHAR},-->
+      <!--create_by = #{createBy,jdbcType=VARCHAR},-->
+      <!--update_time = #{updateTime,jdbcType=VARCHAR},-->
+      <!--update_by = #{updateBy,jdbcType=VARCHAR}-->
+    <!--where id = #{id,jdbcType=INTEGER}-->
+  <!--</update>-->
+</mapper>

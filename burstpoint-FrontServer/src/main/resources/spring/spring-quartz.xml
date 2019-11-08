@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task.xsd ">
+
+<!--
+	<task:annotation-driven />
+	<context:annotation-config />
+ 	<context:component-scan base-package="com.yd.burst.quartz"/>
+
+	<bean id="configRefreshJob" class="com.yd.burst.quartz.ConfigRefreshJob"></bean>
+    <task:scheduled-tasks scheduler="myScheduler">
+        <task:scheduled ref="configRefreshJob" method="execute" cron="0 0/5 * * * ?"/>
+    </task:scheduled-tasks>
+
+    <bean id="payDetailRefreshJob" class="com.yd.burst.quartz.PayDetailRefreshJob"></bean>
+	<task:scheduled-tasks scheduler="myScheduler">
+		<task:scheduled ref="payDetailRefreshJob" method="execute" cron="*/30 * * * * ?"/>
+	</task:scheduled-tasks>
+
+    &lt;!&ndash;定义任务调度器线程池的大小&ndash;&gt;
+    <task:scheduler id="myScheduler" pool-size="10"/>
+
+    &lt;!&ndash;定义任务执行器的线程池大小、等待队列的容量、和拒绝策略&ndash;&gt;
+    <task:executor id="executorWithPoolSizeRange" pool-size="5-25" queue-capacity="100" rejection-policy="CALLER_RUNS"/>
+-->
+
+</beans>

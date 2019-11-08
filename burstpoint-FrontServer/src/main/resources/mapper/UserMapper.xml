@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="login_name" jdbcType="VARCHAR" property="loginName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="birthday" jdbcType="VARCHAR" property="birthday" />
+    <result column="user_type" jdbcType="VARCHAR" property="userType" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="sex" jdbcType="VARCHAR" property="sex" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, login_name, password, user_name, phone, birthday, user_type, status,
+    create_time, create_by, update_time, update_by, sex
+  </sql>
+
+  <select id="selectPlayer" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_user
+    where phone = #{phone,jdbcType=VARCHAR}
+  </select>
+
+  <select id="load" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_user
+  </select>
+
+  <select id="loadNpcPlayer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_user where player_type = '1'
+  </select>
+
+
+  <insert id="insert" parameterType="com.yd.burst.model.User"  keyProperty="id">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into q_user (login_name, password, user_name,
+      phone, birthday, user_type,
+      status, create_time, create_by,
+      update_time, update_by, sex)
+    values (#{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
+      #{phone,jdbcType=VARCHAR}, #{birthday,jdbcType=VARCHAR},
+      #{userType,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+      #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+       #{sex,jdbcType=VARCHAR} )
+  </insert>
+
+</mapper>

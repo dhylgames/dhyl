@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.ConfigMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.Config">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="key" jdbcType="VARCHAR" property="key" />
+    <result column="subject" jdbcType="VARCHAR" property="subject" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="value1" jdbcType="VARCHAR" property="value1" />
+    <result column="value2" jdbcType="VARCHAR" property="value2" />
+    <result column="value3" jdbcType="VARCHAR" property="value3" />
+    <result column="order" jdbcType="INTEGER" property="order" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, key, subject, name, value1, value2, value3, order, remark, create_time, create_by, 
+    update_time, update_by
+  </sql>
+  <select id="selectByKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select *  from bd_config bc where bc.key = #{key,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAllConfig" parameterType="java.lang.Integer" resultType="com.yd.burst.model.Config">
+    select * from bd_config
+  </select>
+
+</mapper>
