@@ -7,7 +7,6 @@ public class Constants {
     public static final int MODE_PROBABILITY = 4;   //概率局
 
     public static final String SESSION_KEY = "$PLAYER";     //session存储
-    public static final String REDIS_PLAYER = "PLAYER_";     //session存储在redis
 
 
     public static final int CURRENT_GAME = 0;   // 当前局
