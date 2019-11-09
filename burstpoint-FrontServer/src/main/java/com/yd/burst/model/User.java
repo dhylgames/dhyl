@@ -3,9 +3,8 @@ package com.yd.burst.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * @author Will
+ * @author Waylon
  */
-
 public class User extends BaseEntity{
 
     private String loginName;
