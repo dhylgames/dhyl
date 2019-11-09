@@ -23,11 +23,11 @@ public class JWTUtil {
     }
 
     // 加密Token
-    public static String encode(String playerId, Integer exceptionTime) {
+    public static String encode(String phone, Integer exceptionTime) {
         Map<String, Object> claims = new HashMap<>();
         long nowMillis = System.currentTimeMillis();
         long expirationMillis = nowMillis + exceptionTime * 60000L;
-        claims.put("playerId", playerId);
+        claims.put("phone", phone);
         return Jwts.builder()
                 .setSubject("subValue")
                 .addClaims(claims)
@@ -42,7 +42,7 @@ public class JWTUtil {
             Claims claims = Jwts.parser()
                     .setSigningKey(SECRET_KEY)
                     .parseClaimsJws(accessToken).getBody();
-            return (String) claims.get("playerId");
+            return (String) claims.get("phone");
         } catch (Exception e) {  // 解密失败，返回null
             return null;
         }

@@ -11,6 +11,7 @@ import com.yd.burst.enums.ICode;
 import com.yd.burst.model.User;
 import com.yd.burst.service.UserService;
 import com.yd.burst.util.Constants;
+import com.yd.burst.util.JWTUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.ValidationException;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -126,9 +128,13 @@ public class UserController {
         }*/
         Object object = userService.login(user.getPhone(), user.getPassword());
         if (object instanceof User) {
+            Map map=new HashMap<Object,Object>();
             User player = (User) object;
             session.setAttribute(Constants.SESSION_KEY, player);
-            return Result.success(player);
+            String token=JWTUtil.encode(player.getPhone(),12*60);
+            map.put("token",token);
+            map.put("user",user);
+            return Result.success(map);
         } else {
             return Result.fail((CodeEnum) object);
         }
@@ -163,9 +169,13 @@ public class UserController {
             HttpSession session = request.getSession();
             Object object = userService.login(user.getPhone());
             if (object instanceof User) {
+                Map map=new HashMap<Object,Object>();
                 User player = (User) object;
                 session.setAttribute(Constants.SESSION_KEY, player);
-                return Result.success(player);
+                String token=JWTUtil.encode(player.getPhone(),12*60);
+                map.put("token",token);
+                map.put("user",user);
+                return Result.success(map);
             } else {
                 return Result.fail((CodeEnum) object);
             }
@@ -238,11 +248,12 @@ public class UserController {
      * @return
      */
     @RequestMapping("/logout")
-    public Result login(HttpServletRequest request, HttpServletResponse response) {
+    public Result login(HttpServletRequest request, HttpServletResponse response,String phone) {
         HttpSession session = request.getSession();
         if (session != null) {
             session.removeAttribute(Constants.SESSION_KEY);
         }
+        JWTUtil.encode(phone,0);
         return Result.success();
     }
 
