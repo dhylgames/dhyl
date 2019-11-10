@@ -38,12 +38,14 @@ public class Result implements Serializable {
     public static Result success() {
         Result result = new Result();
         result.setCode(CodeEnum.SUCCESS.getCode());
+        result.setMsg(CodeEnum.SUCCESS.getTrans());
         return result;
     }
 
     public static Result success(Object data) {
         Result result = new Result();
         result.setCode(CodeEnum.SUCCESS.getCode());
+        result.setMsg(CodeEnum.SUCCESS.getTrans());
         result.setData(data);
         return result;
     }

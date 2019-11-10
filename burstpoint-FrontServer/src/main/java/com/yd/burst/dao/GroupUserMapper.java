@@ -11,4 +11,6 @@ public interface GroupUserMapper {
     List<GroupUser> getGroupUser(String groupUserId);
 
     List<GroupUser> findGroupUsers(String groupCode);
+
+    int addGroupUser(GroupUser groupUser);
 }

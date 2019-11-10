@@ -4,6 +4,7 @@ import com.yd.burst.cache.CacheBase;
 import com.yd.burst.dao.GroupUserMapper;
 import com.yd.burst.dao.UserMapper;
 import com.yd.burst.enums.CodeEnum;
+import com.yd.burst.enums.ICode;
 import com.yd.burst.model.GroupUser;
 import com.yd.burst.model.User;
 import com.yd.burst.service.GroupUserService;
@@ -34,13 +35,22 @@ public class GroupUserServiceImpl implements GroupUserService {
     private GroupUserMapper   groupUserMapper;
 
     @Override
-    public int addGroupUser(GroupUser groupUser) {
-        return 0;
+    public ICode addGroupUser(GroupUser groupUser) {
+        ICode code;
+      int  count=  groupUserMapper.addGroupUser(groupUser);
+        if (count > 0) {
+            code = CodeEnum.SUCCESS;
+        } else {
+            code = CodeEnum.REGISTER_FAILED;
+        }
+        return code;
     }
 
     @Override
-    public int updateGroupUser(String groupCode) {
-        return 0;
+    public ICode updateGroupUser(String groupCode) {
+        ICode code;
+        code = CodeEnum.SUCCESS;
+        return code;
     }
 
     @Override

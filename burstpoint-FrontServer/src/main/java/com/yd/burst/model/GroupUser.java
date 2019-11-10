@@ -27,7 +27,7 @@ public class GroupUser extends BaseEntity{
     /**
      * 充值虚拟币金额
      */
-    private Double groupUserAmount;
+    private String groupUserAmount;
 
     public String getGroupCode() {
         return groupCode;
@@ -61,11 +61,11 @@ public class GroupUser extends BaseEntity{
         this.groupUserStatus = groupUserStatus;
     }
 
-    public Double getGroupUserAmount() {
+    public String getGroupUserAmount() {
         return groupUserAmount;
     }
 
-    public void setGroupUserAmount(Double groupUserAmount) {
+    public void setGroupUserAmount(String groupUserAmount) {
         this.groupUserAmount = groupUserAmount;
     }
 }

@@ -33,8 +33,7 @@ public class GroupInfoController {
     @Autowired
     private GroupUserService   groupUserService;
     /**
-     * 参数手机号，返回值当前用户的身份和加入的群号
-     * @param request
+     * 群列表信息
      * @param params
      * @return
      */

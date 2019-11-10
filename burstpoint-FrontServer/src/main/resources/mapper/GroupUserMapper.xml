@@ -7,7 +7,7 @@
     <result column="group_user_id" jdbcType="VARCHAR" property="groupUserId" />
     <result column="group_user_type" jdbcType="VARCHAR" property="groupUserType" />
     <result column="group_user_status" jdbcType="VARCHAR" property="groupUserStatus" />
-    <result column="group_user_amount" jdbcType="DOUBLE" property="groupUserAmount" />
+    <result column="group_user_amount" jdbcType="VARCHAR" property="groupUserAmount" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
@@ -17,7 +17,17 @@
     id, group_code, group_user_id, group_user_type, group_user_status, group_user_amount,
     create_time, create_by, update_time, update_by
   </sql>
-
+  <insert id="addGroupUser" parameterType="com.yd.burst.model.GroupUser"  keyProperty="id">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into q_group_user (group_code, group_user_id, group_user_type,
+    group_user_status, group_user_amount, create_time,create_by,update_time,update_by)
+    values (#{groupCode,jdbcType=VARCHAR}, #{groupUserId,jdbcType=VARCHAR}, #{groupUserType,jdbcType=VARCHAR},
+    #{groupUserStatus,jdbcType=VARCHAR}, #{groupUserAmount,jdbcType=VARCHAR},
+     #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+    #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR})
+  </insert>
   <select id="getGroupUser" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
