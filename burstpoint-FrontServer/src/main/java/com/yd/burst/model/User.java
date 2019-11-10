@@ -3,26 +3,42 @@ package com.yd.burst.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
+ * 用户表
  * @author Waylon
  */
 public class User extends BaseEntity{
-
+    /*
+     * 登录账号
+     */
     private String loginName;
 
-    @JsonIgnore
+    /*
+     * 密码
+     */
     private String password;
-
-    @JsonIgnore
+    /*
+     * 昵称
+     */
     private String userName;
-
+    /*
+     * 手机号
+     */
     private String phone;
-
+    /*
+     * 生日
+     */
     private String birthday;
-
+    /*
+     *  用户类型  1-群主  2-普通用户
+     */
     private String  userType;
-
+    /*
+     * 用户状态 0-未激活 1-正常  2-禁用-3-删除
+     */
     private String  status;
-
+    /*
+     * 性别 0-未知 1-男  2-女
+     */
     private String  sex;
 
     public String getLoginName() {
