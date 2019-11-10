@@ -34,12 +34,6 @@
     from q_user
   </select>
 
-  <select id="loadNpcPlayer" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from q_user where player_type = '1'
-  </select>
-
 
   <insert id="insert" parameterType="com.yd.burst.model.User"  keyProperty="id">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -55,5 +49,21 @@
       #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
        #{sex,jdbcType=VARCHAR} )
   </insert>
+
+
+  <update id="updatePassByPhone" parameterType="com.yd.burst.model.User" >
+    update q_user
+    set
+      password = #{password,jdbcType=VARCHAR}
+      where phone = #{phone,jdbcType=VARCHAR}
+  </update>
+
+  <update id="updateByPhone" parameterType="com.yd.burst.model.User">
+    update q_user
+    set
+      sex = #{sex,jdbcType=VARCHAR},
+      user_name=#{userName,jdbcType=VARCHAR}
+      where phone = #{phone,jdbcType=VARCHAR}
+  </update>
 
 </mapper>

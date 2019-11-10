@@ -33,4 +33,20 @@ public interface UserService {
      * @return
      */
     Object login(String phone);
+
+
+    /**
+     * 密码修改
+     * @param user
+     */
+    ICode updatePass(User user);
+
+
+    /**
+     * 修改用户信息
+     * @param phone
+     * @param sex
+     *  @param userName
+     */
+    ICode updateByPhone(String phone,String sex,String userName);
 }

@@ -8,9 +8,14 @@ public interface UserMapper {
 
     List<User> load();
 
-    int insert(User player);
+    int insert(User user);
 
     User selectPlayer(String phone);
+
+    int updatePassByPhone(User user);
+
+    int updateByPhone(User user);
+
 
 
 }

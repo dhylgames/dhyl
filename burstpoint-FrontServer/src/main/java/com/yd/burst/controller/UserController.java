@@ -12,6 +12,7 @@ import com.yd.burst.model.User;
 import com.yd.burst.service.UserService;
 import com.yd.burst.util.Constants;
 import com.yd.burst.util.JWTUtil;
+import com.yd.burst.util.Md5Util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -114,9 +115,6 @@ public class UserController {
         if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(password)) {
             throw new ValidationException();
         }
-        User user = new User();
-        user.setPhone(phone);
-        user.setPassword(password);
 
         HttpSession session = request.getSession();
         /*
@@ -126,12 +124,12 @@ public class UserController {
             request.getSession().removeAttribute(com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY);
             return Result.fail(CodeEnum.VERIFICATION_FAILED);
         }*/
-        Object object = userService.login(user.getPhone(), user.getPassword());
+        Object object = userService.login(phone,password);
         if (object instanceof User) {
             Map map=new HashMap<Object,Object>();
-            User player = (User) object;
-            session.setAttribute(Constants.SESSION_KEY, player);
-            String token=JWTUtil.encode(player.getPhone(),12*60);
+            User user = (User) object;
+            session.setAttribute(Constants.SESSION_KEY, user);
+            String token=JWTUtil.encode(user.getPhone(),12*60);
             map.put("token",token);
             map.put("user",user);
             return Result.success(map);
@@ -248,7 +246,11 @@ public class UserController {
      * @return
      */
     @RequestMapping("/logout")
-    public Result login(HttpServletRequest request, HttpServletResponse response,String phone) {
+    public Result login(HttpServletRequest request, HttpServletResponse response,@RequestBody Map<String, String> params) {
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+        String phone = params.get("phone");
         HttpSession session = request.getSession();
         if (session != null) {
             session.removeAttribute(Constants.SESSION_KEY);
@@ -257,4 +259,82 @@ public class UserController {
         return Result.success();
     }
 
+
+
+    /**
+     * 修改密码
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/update_password")
+    public Result update_password(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> params) {
+
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+
+        String token = request.getHeader("token");
+        String phone = params.get("phone");
+        String oldPassword = params.get("oldPassword");
+        String password = params.get("password");
+        if (StringUtils.isEmpty(token) || StringUtils.isEmpty(phone) || StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(password)) {
+            throw new ValidationException();
+        }
+        if(phone.equals(JWTUtil.decode(token)))
+        {
+            Object object = userService.login(phone,oldPassword);
+            if (object instanceof User) {
+                User user=new User();
+                user.setPhone(phone);
+                user.setPassword(Md5Util.getMD5(password));
+                ICode str =userService.updatePass(user);
+                if (CodeEnum.SUCCESS.getCode().equals(str.getCode())) {
+                    return Result.success();
+                } else {
+                    return Result.fail(str);
+                }
+            } else {
+                return Result.fail((CodeEnum) object);
+            }
+        }else{
+            return Result.fail(CodeEnum.ERROR_CODE);
+        }
+
+
+    }
+
+    /**
+     * 修改用户信息
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/update_user_info")
+    public Result update_user_info(HttpServletRequest request, HttpServletResponse response, @RequestBody Map<String, String> params) {
+
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+        String token = request.getHeader("token");
+        String phone = params.get("phone");
+        String sex = params.get("sex");
+        String userName = params.get("userName");
+        if (StringUtils.isEmpty(token) ||StringUtils.isEmpty(phone) || StringUtils.isEmpty(sex) || StringUtils.isEmpty(userName)) {
+            throw new ValidationException();
+        }
+        if(phone.equals(JWTUtil.decode(token)))
+        {
+
+            ICode str = userService.updateByPhone(phone,sex,userName);
+            if (CodeEnum.SUCCESS.getCode().equals(str.getCode())) {
+                return Result.success();
+            } else {
+                return Result.fail(str);
+            }
+        }else{
+            return Result.fail(CodeEnum.ERROR_CODE);
+        }
+
+    }
 }

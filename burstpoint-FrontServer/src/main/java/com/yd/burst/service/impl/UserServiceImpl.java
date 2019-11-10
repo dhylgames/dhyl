@@ -94,5 +94,40 @@ public class UserServiceImpl implements UserService {
         }
         return CodeEnum.LOGIN_FAILED;
     }
+
+    @Override
+    public ICode updatePass(User user) {
+        ICode code;
+        int count = userMapper.updatePassByPhone(user);
+
+        if (count > 0) {
+            code = CodeEnum.SUCCESS;
+        } else {
+            code = CodeEnum.ERROR_UPDATE_PASSWORD;
+        }
+        return code;
+    }
+
+    @Override
+    public ICode updateByPhone(String phone, String sex, String userName) {
+        ICode code;
+        User userTemp = userMapper.selectPlayer(phone);
+        if (userTemp == null) {
+            return CodeEnum.NOT_EXIST_PLAYER;
+        }
+        User user=new User();
+        user.setPhone(phone);
+        user.setSex(sex);
+        user.setUserName(userName);
+        int count = userMapper.updateByPhone(user);
+
+        if (count > 0) {
+            code = CodeEnum.SUCCESS;
+        } else {
+            code = CodeEnum.ERROR_UPDATE_USER;
+        }
+        return code;
+
+    }
 }
 
