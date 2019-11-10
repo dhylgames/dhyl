@@ -18,11 +18,17 @@
     create_time, create_by, update_time, update_by
   </sql>
 
-
-  <select id="load" resultMap="BaseResultMap">
+  <select id="getGroupUser" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from q_group_user
+    where group_user_id = #{groupUserId,jdbcType=VARCHAR}
   </select>
 
+  <select id="findGroupUsers" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_group_user
+    where group_code = #{groupCode,jdbcType=VARCHAR}
+  </select>
 </mapper>

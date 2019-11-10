@@ -27,7 +27,12 @@
     from q_user
     where phone = #{phone,jdbcType=VARCHAR}
   </select>
-
+  <select id="selectUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
   <select id="load" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

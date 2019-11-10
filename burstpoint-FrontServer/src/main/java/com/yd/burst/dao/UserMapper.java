@@ -17,5 +17,5 @@ public interface UserMapper {
     int updateByPhone(User user);
 
 
-
+    User selectUserById(int id);
 }
