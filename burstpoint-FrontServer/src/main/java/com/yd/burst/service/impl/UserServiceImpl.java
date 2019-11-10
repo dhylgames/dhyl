@@ -9,6 +9,7 @@ import com.yd.burst.model.User;
 import com.yd.burst.service.UserService;
 import com.yd.burst.util.DateUtil;
 import com.yd.burst.util.Md5Util;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService {
         user.setUpdateTime(DateUtil.dateToStr(new Date()));
         user.setStatus(UserStatusEnum.NORMAL.getCode());
         user.setUserType(UserStatusEnum.USER.getCode());
+        user.setUserName(RandomStringUtils.random(4, "abcdefgABCDEFG123456789")+user.getPhone());
+        user.setLoginName(RandomStringUtils.random(4, "abcdefgABCDEFG123456789")+user.getPhone());
         int count = userMapper.insert(user);
 
         if (count > 0) {
