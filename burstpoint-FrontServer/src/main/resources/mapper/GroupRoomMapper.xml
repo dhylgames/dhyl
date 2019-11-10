@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yd.burst.dao.GroupInfoMapper">
-  <resultMap id="BaseResultMap" type="com.yd.burst.model.GroupInfo">
+<mapper namespace="com.yd.burst.dao.GroupRoomMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.GroupRoom">
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
-    <result column="group_head_pic" jdbcType="VARCHAR" property="groupHeadPic" />
-    <result column="group_status" jdbcType="VARCHAR" property="groupStatus" />
+    <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
+    <result column="group_room_type" jdbcType="VARCHAR" property="groupRoomType" />
+    <result column="group_room_status" jdbcType="VARCHAR" property="groupRoomStatus" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, group_name, group_head_pic, group_status,
+    id, group_code, group_room_type, group_room_status,
     create_time, create_by, update_time, update_by
   </sql>
-
 
 
   <select id="load" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from q_group_info
+    from q_group_room
   </select>
-
-
 
 </mapper>

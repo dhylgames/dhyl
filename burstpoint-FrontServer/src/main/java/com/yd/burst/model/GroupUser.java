@@ -1,6 +1,6 @@
 package com.yd.burst.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 /**
  * 群成员表

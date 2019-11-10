@@ -22,7 +22,7 @@
   <select id="load" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from q_user
+    from q_group_user
   </select>
 
 </mapper>
