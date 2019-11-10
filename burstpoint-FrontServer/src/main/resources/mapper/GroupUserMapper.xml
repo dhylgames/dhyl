@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yd.burst.dao.GroupUserMapper">
+  <resultMap id="BaseResultMap" type="com.yd.burst.model.GroupUser">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
+    <result column="group_user_id" jdbcType="VARCHAR" property="groupUserId" />
+    <result column="group_user_type" jdbcType="VARCHAR" property="groupUserType" />
+    <result column="group_user_status" jdbcType="VARCHAR" property="groupUserStatus" />
+    <result column="group_user_amount" jdbcType="DOUBLE" property="groupUserAmount" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, group_code, group_user_id, group_user_type, group_user_status, group_user_amount,
+    create_time, create_by, update_time, update_by
+  </sql>
+
+
+  <select id="load" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from q_user
+  </select>
+
+</mapper>
