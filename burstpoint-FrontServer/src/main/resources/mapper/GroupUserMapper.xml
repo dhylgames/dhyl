@@ -1,44 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yd.burst.dao.GroupUserMapper">
-  <resultMap id="BaseResultMap" type="com.yd.burst.model.GroupUser">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="group_code" jdbcType="VARCHAR" property="groupCode" />
-    <result column="group_user_id" jdbcType="VARCHAR" property="groupUserId" />
-    <result column="group_user_type" jdbcType="VARCHAR" property="groupUserType" />
-    <result column="group_user_status" jdbcType="VARCHAR" property="groupUserStatus" />
-    <result column="group_user_amount" jdbcType="VARCHAR" property="groupUserAmount" />
-    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.yd.burst.model.GroupUser">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="group_code" jdbcType="VARCHAR" property="groupCode"/>
+        <result column="group_user_id" jdbcType="VARCHAR" property="groupUserId"/>
+        <result column="group_user_type" jdbcType="VARCHAR" property="groupUserType"/>
+        <result column="group_user_status" jdbcType="VARCHAR" property="groupUserStatus"/>
+        <result column="group_user_amount" jdbcType="VARCHAR" property="groupUserAmount"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, group_code, group_user_id, group_user_type, group_user_status, group_user_amount,
     create_time, create_by, update_time, update_by
   </sql>
-  <insert id="addGroupUser" parameterType="com.yd.burst.model.GroupUser"  keyProperty="id">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into q_group_user (group_code, group_user_id, group_user_type,
-    group_user_status, group_user_amount, create_time,create_by,update_time,update_by)
-    values (#{groupCode,jdbcType=VARCHAR}, #{groupUserId,jdbcType=VARCHAR}, #{groupUserType,jdbcType=VARCHAR},
-    #{groupUserStatus,jdbcType=VARCHAR}, #{groupUserAmount,jdbcType=VARCHAR},
-     #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
-    #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR})
-  </insert>
-  <select id="getGroupUser" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from q_group_user
-    where group_user_id = #{groupUserId,jdbcType=VARCHAR}
-  </select>
+    <insert id="addGroupUser" parameterType="com.yd.burst.model.GroupUser" keyProperty="id">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into q_group_user (group_code, group_user_id, group_user_type,
+        group_user_status, group_user_amount, create_time,create_by,update_time,update_by)
+        values (#{groupCode,jdbcType=VARCHAR}, #{groupUserId,jdbcType=VARCHAR}, #{groupUserType,jdbcType=VARCHAR},
+        #{groupUserStatus,jdbcType=VARCHAR}, #{groupUserAmount,jdbcType=VARCHAR},
+        #{createTime,jdbcType=VARCHAR}, #{createBy,jdbcType=VARCHAR},
+        #{updateTime,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR})
+    </insert>
+    <select id="getGroupUser" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from q_group_user
+        where group_user_id = #{groupUserId,jdbcType=VARCHAR}
+        and group_user_status="1"
+    </select>
 
-  <select id="findGroupUsers" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="findGroupUsers" parameterType="com.yd.burst.model.GroupUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from q_group_user
+        where 1=1
+        <if test="groupCode!=null and groupCode!=''">
+            and group_code = #{groupCode,jdbcType=VARCHAR}
+        </if>
+        <if test="groupUserType!=null and groupUserType!=''">
+            and group_user_type = #{groupUserType,jdbcType=VARCHAR}
+        </if>
+        <if test="groupUserStatus!=null and groupUserStatus!=''">
+            and group_user_status = #{groupUserStatus,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <update id="updateStatus" parameterType="com.yd.burst.model.GroupUser">
+    update q_group_user
+    set
+      group_user_status = #{groupUserStatus,jdbcType=VARCHAR}
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getGroupUserById" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    <include refid="Base_Column_List"/>
     from q_group_user
-    where group_code = #{groupCode,jdbcType=VARCHAR}
+    where 1=1
+    <if test="groupCode!=null and groupCode!=''">
+      and group_code = #{groupCode,jdbcType=VARCHAR}
+    </if>
+    <if test="groupUserId!=null and groupUserId!=''">
+      and group_user_id = #{groupUserId,jdbcType=VARCHAR}
+    </if>
+
   </select>
 </mapper>

@@ -14,5 +14,7 @@ public interface GroupUserService {
 
     Object getGroupUser(String phone);
 
-    Object findGroupUsers(String groupCode);
+    Object findGroupUsers(GroupUser groupUser);
+
+    ICode auditUser(String userId, String status,String groupCode);
 }

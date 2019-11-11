@@ -32,12 +32,12 @@ public class GroupUserServiceImpl implements GroupUserService {
     private CacheBase cacheBase;
 
     @Autowired
-    private GroupUserMapper   groupUserMapper;
+    private GroupUserMapper groupUserMapper;
 
     @Override
     public ICode addGroupUser(GroupUser groupUser) {
         ICode code;
-      int  count=  groupUserMapper.addGroupUser(groupUser);
+        int count = groupUserMapper.addGroupUser(groupUser);
         if (count > 0) {
             code = CodeEnum.SUCCESS;
         } else {
@@ -55,32 +55,55 @@ public class GroupUserServiceImpl implements GroupUserService {
 
     @Override
     public Object getGroupUser(String phone) {
-       User user= userMapper.selectPlayer(phone);
+        User user = userMapper.selectPlayer(phone);
         if (user != null) {
-            List<GroupUser> groupUsers= groupUserMapper.getGroupUser(user.getId().toString());
-          if(groupUsers!=null&&groupUsers.size()>0){
-              return groupUsers;
-          }else{
-              return CodeEnum.NOT_EXIST_PLAYER;
-          }
+            List<GroupUser> groupUsers = groupUserMapper.getGroupUser(user.getId().toString());
+            if (groupUsers != null && groupUsers.size() > 0) {
+                return groupUsers;
+            } else {
+                return CodeEnum.NOT_EXIST_PLAYER;
+            }
         } else {
             return CodeEnum.NOT_EXIST_PLAYER;
         }
     }
 
     @Override
-    public Object findGroupUsers(String groupCode) {
-        List<GroupUser> groupUsers=  groupUserMapper.findGroupUsers(groupCode);
-        List<User>  users=new ArrayList<>();
-        if (groupUsers!=null&&groupUsers.size()>0){
-            for (int i = 0; i <groupUsers.size() ; i++) {
-              User user=  userMapper.selectUserById(Integer.parseInt(groupUsers.get(i).getGroupUserId()));
-              users.add(user);
+    public Object findGroupUsers(GroupUser groupUser) {
+        List<GroupUser> groupUsers = groupUserMapper.findGroupUsers(groupUser);
+        List<User> users = new ArrayList<>();
+        if (groupUsers != null && groupUsers.size() > 0) {
+            for (int i = 0; i < groupUsers.size(); i++) {
+                User user = userMapper.selectUserById(Integer.parseInt(groupUsers.get(i).getGroupUserId()));
+                users.add(user);
             }
-            return  users;
-        }else{
+            return users;
+        } else {
             return CodeEnum.NOT_EXIST_PLAYER;
         }
+    }
+
+    @Override
+    public ICode auditUser(String userId, String status,String groupCode) {
+        ICode code = null;
+      GroupUser  groupUser= groupUserMapper.getGroupUserById(userId,groupCode);
+      try {
+          if (groupUser != null) {
+              groupUser.setGroupUserStatus(status);
+            int  count=  groupUserMapper.updateStatus(groupUser);
+            if(count>0){
+                code=CodeEnum.SUCCESS;
+            }else{
+                 code= CodeEnum.ERROR;
+            }
+          } else {
+              code=CodeEnum.NOT_EXIST_PLAYER;
+          }
+      }catch (Exception e){
+          e.printStackTrace();
+         code= CodeEnum.ERROR;
+      }
+        return code;
     }
 }
 
