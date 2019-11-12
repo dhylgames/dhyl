@@ -24,6 +24,11 @@
     from q_group_info
   </select>
 
-
+  <update id="deleteGroupInfoStatus" parameterType="java.lang.Integer">
+    update q_group_info
+    set
+      group_status = "3"
+       where id = #{id,jdbcType=INTEGER}
+  </update>
 
 </mapper>

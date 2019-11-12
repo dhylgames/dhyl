@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * @Description:
- * @Author: Will
+ * @Author: tianyou
  * @Date: 2019-07-29 19:51
  **/
 @Service
@@ -103,6 +103,22 @@ public class GroupUserServiceImpl implements GroupUserService {
           e.printStackTrace();
          code= CodeEnum.ERROR;
       }
+        return code;
+    }
+
+    @Override
+    public ICode exitGroup(String userId, String groupCode) {
+        ICode code=null;
+        try{
+            int  count=  groupUserMapper.deleteGroupUserStatusByUserId(groupCode,userId);
+            if(count>0){
+                code= CodeEnum.SUCCESS;
+            }else{
+                code= CodeEnum.ERROR;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return code;
     }
 }

@@ -1,6 +1,7 @@
 package com.yd.burst.service;
 
 
+import com.yd.burst.enums.ICode;
 
 /**
  * @Description:
@@ -10,4 +11,5 @@ package com.yd.burst.service;
 public interface GroupInfoService {
 
 
+    ICode disBandGroup(String groupCode);
 }

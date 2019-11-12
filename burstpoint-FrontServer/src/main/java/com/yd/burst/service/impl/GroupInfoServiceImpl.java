@@ -1,7 +1,11 @@
 package com.yd.burst.service.impl;
 
 import com.yd.burst.cache.CacheBase;
+import com.yd.burst.dao.GroupInfoMapper;
+import com.yd.burst.dao.GroupUserMapper;
 import com.yd.burst.dao.UserMapper;
+import com.yd.burst.enums.CodeEnum;
+import com.yd.burst.enums.ICode;
 import com.yd.burst.service.GroupInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,10 +21,33 @@ import org.springframework.transaction.annotation.Transactional;
 public class GroupInfoServiceImpl implements GroupInfoService {
 
     @Autowired
-    private UserMapper userMapper;
+    private GroupUserMapper groupUserMapper;
 
     @Autowired
     private CacheBase cacheBase;
 
+    @Autowired
+    private GroupInfoMapper groupInfoMapper;
+
+    @Override
+    public ICode disBandGroup(String groupCode) {
+        ICode code=null;
+        try{
+          int  count=  groupInfoMapper.deleteGroupInfoStatus(Integer.parseInt(groupCode));
+          if(count>0){
+          int  count1=    groupUserMapper.deleteGroupUserStatus(groupCode);
+          if(count1>0){
+              code= CodeEnum.SUCCESS;
+          }else{
+              code= CodeEnum.ERROR;
+          }
+          }else{
+            code= CodeEnum.ERROR;
+          }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return code;
+    }
 }
 

@@ -57,17 +57,30 @@
       group_user_status = #{groupUserStatus,jdbcType=VARCHAR}
       where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="getGroupUserById" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List"/>
-    from q_group_user
-    where 1=1
-    <if test="groupCode!=null and groupCode!=''">
-      and group_code = #{groupCode,jdbcType=VARCHAR}
-    </if>
-    <if test="groupUserId!=null and groupUserId!=''">
-      and group_user_id = #{groupUserId,jdbcType=VARCHAR}
-    </if>
+    <select id="getGroupUserById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from q_group_user
+        where 1=1
+        <if test="groupCode!=null and groupCode!=''">
+            and group_code = #{groupCode,jdbcType=VARCHAR}
+        </if>
+        <if test="groupUserId!=null and groupUserId!=''">
+            and group_user_id = #{groupUserId,jdbcType=VARCHAR}
+        </if>
 
-  </select>
+    </select>
+    <update id="deleteGroupUserStatus" parameterType="java.lang.String">
+    update q_group_user
+    set
+      group_user_status = "3"
+      where group_code = #{groupCode,jdbcType=VARCHAR}
+  </update>
+    <update id="deleteGroupUserStatusByUserId" parameterType="java.lang.String">
+    update q_group_user
+    set
+      group_user_status = "3"
+       where group_code = #{groupCode,jdbcType=VARCHAR}
+        and group_user_id = #{groupUserId,jdbcType=VARCHAR}
+  </update>
 </mapper>

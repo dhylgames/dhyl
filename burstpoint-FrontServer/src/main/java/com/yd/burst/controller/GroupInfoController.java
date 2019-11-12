@@ -2,6 +2,7 @@ package com.yd.burst.controller;
 
 import com.yd.burst.common.Result;
 import com.yd.burst.enums.CodeEnum;
+import com.yd.burst.enums.ICode;
 import com.yd.burst.model.GroupUser;
 import com.yd.burst.model.User;
 import com.yd.burst.service.GroupInfoService;
@@ -55,5 +56,49 @@ public class GroupInfoController {
         }
     }
 
+    /**
+     * 解散群
+     * @param params
+     * @return
+     */
+    @RequestMapping("/disBandGroup")
+    public Result disBandGroupOrExit(@RequestBody Map<String, String> params){
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+        String groupCode = params.get("groupCode");
+        if (StringUtils.isEmpty(groupCode)) {
+            throw new ValidationException();
+        }
+        ICode code=   groupInfoService.disBandGroup(groupCode);
+        if (CodeEnum.SUCCESS.getCode().equals(code.getCode())) {
+            return Result.success();
+        } else {
+            return Result.fail(code);
+        }
+    }
+    /**
+     * 退出群
+     * @param params
+     * @return
+     */
+    @RequestMapping("/exitGroup")
+    public Result exitGroup(@RequestBody Map<String, String> params){
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+        String groupCode = params.get("groupCode");
+        String userId = params.get("userId");
+        if (StringUtils.isEmpty(userId)||StringUtils.isEmpty(groupCode)) {
+            throw new ValidationException();
+        }
+        ICode code= groupUserService.exitGroup(userId,groupCode);
+        if (CodeEnum.SUCCESS.getCode().equals(code.getCode())) {
+            return Result.success();
+        } else {
+            return Result.fail(code);
+        }
+
+    }
 
 }

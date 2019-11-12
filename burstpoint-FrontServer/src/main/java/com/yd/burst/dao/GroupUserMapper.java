@@ -18,4 +18,7 @@ public interface GroupUserMapper {
     GroupUser getGroupUserById(@Param("groupUserId") String groupUserId, @Param("groupCode")String groupCode);
 
     int updateStatus(GroupUser groupUser);
+
+    int deleteGroupUserStatus(String groupCode);
+    int deleteGroupUserStatusByUserId(@Param("groupCode")String  groupCode,@Param("groupUserId") String groupUserId);
 }

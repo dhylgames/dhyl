@@ -17,4 +17,6 @@ public interface GroupUserService {
     Object findGroupUsers(GroupUser groupUser);
 
     ICode auditUser(String userId, String status,String groupCode);
+
+    ICode exitGroup(String userId, String groupCode);
 }
