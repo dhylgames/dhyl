@@ -12,4 +12,6 @@ public interface GroupInfoService {
 
 
     ICode disBandGroup(String groupCode);
+
+    String getGroupName(String groupCode);
 }

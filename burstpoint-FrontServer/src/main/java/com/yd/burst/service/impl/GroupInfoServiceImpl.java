@@ -49,5 +49,11 @@ public class GroupInfoServiceImpl implements GroupInfoService {
         }
         return code;
     }
+
+    @Override
+    public String getGroupName(String groupCode) {
+       String  groupName= groupInfoMapper.getGroupNameById(Integer.parseInt(groupCode));
+        return groupName;
+    }
 }
 

@@ -5,6 +5,7 @@ import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.ICode;
 import com.yd.burst.model.GroupUser;
 import com.yd.burst.model.User;
+import com.yd.burst.service.GroupInfoService;
 import com.yd.burst.service.GroupUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +26,8 @@ public class GroupUserController {
     private static Logger logger = LogManager.getLogger(GroupUserController.class);
     @Autowired
     private GroupUserService  groupUserService;
-
+    @Autowired
+    private GroupInfoService groupInfoService;
     /**
      * 群成员列表信息
      */
@@ -97,10 +99,12 @@ public class GroupUserController {
         groupUser.setGroupUserStatus("0");
         groupUser.setGroupUserType("0");
         Object  object=groupUserService.findGroupUsers(groupUser);
+      String  groupName=  groupInfoService.getGroupName(groupCode);
         if (object instanceof List) {
             Map map=new HashMap<Object,Object>();
             List<User> Users = (List<User>) object;
             map.put("groupCode",groupCode);
+            map.put("groupName",groupName);
             map.put("users",Users);
             return Result.success(map);
         } else {

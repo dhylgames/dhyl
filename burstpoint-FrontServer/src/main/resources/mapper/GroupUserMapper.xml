@@ -30,10 +30,12 @@
     </insert>
     <select id="getGroupUser" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+       id,group_code,group_user_id,group_user_type,group_user_status,
+        count(group_code) as userNum
         from q_group_user
         where group_user_id = #{groupUserId,jdbcType=VARCHAR}
         and group_user_status="1"
+        group by group_code
     </select>
 
     <select id="findGroupUsers" parameterType="com.yd.burst.model.GroupUser" resultMap="BaseResultMap">

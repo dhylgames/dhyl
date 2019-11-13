@@ -8,5 +8,7 @@ import java.util.List;
 public interface GroupInfoMapper {
 
 
-    int deleteGroupInfoStatus(Integer groupCode);
+    int deleteGroupInfoStatus(Integer id);
+
+    String getGroupNameById(Integer id);
 }

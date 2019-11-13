@@ -29,6 +29,9 @@ public class GroupUser extends BaseEntity{
      */
     private String groupUserAmount;
 
+    private  String groupName;
+    private String userNum;
+    private String groupRoom;
     public String getGroupCode() {
         return groupCode;
     }
@@ -67,5 +70,29 @@ public class GroupUser extends BaseEntity{
 
     public void setGroupUserAmount(String groupUserAmount) {
         this.groupUserAmount = groupUserAmount;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getUserNum() {
+        return userNum;
+    }
+
+    public void setUserNum(String userNum) {
+        this.userNum = userNum;
+    }
+
+    public String getGroupRoom() {
+        return groupRoom;
+    }
+
+    public void setGroupRoom(String groupRoom) {
+        this.groupRoom = groupRoom;
     }
 }

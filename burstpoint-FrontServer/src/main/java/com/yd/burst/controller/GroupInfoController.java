@@ -48,9 +48,10 @@ public class GroupInfoController {
             throw new ValidationException();
         }
         Object   object =groupUserService.getGroupUser(phone);
-        if (object !=null) {
-            List<GroupUser> groupUser = (List<GroupUser>) object;
-            return Result.success(groupUser);
+        if (object instanceof List) {
+            Map  map=new HashMap();
+            List<GroupUser> groupUsers = (List<GroupUser>) object;
+            return Result.success(groupUsers);
         } else {
             return Result.fail(CodeEnum.ERROR);
         }

@@ -1,6 +1,7 @@
 package com.yd.burst.service.impl;
 
 import com.yd.burst.cache.CacheBase;
+import com.yd.burst.dao.GroupInfoMapper;
 import com.yd.burst.dao.GroupUserMapper;
 import com.yd.burst.dao.UserMapper;
 import com.yd.burst.enums.CodeEnum;
@@ -33,7 +34,8 @@ public class GroupUserServiceImpl implements GroupUserService {
 
     @Autowired
     private GroupUserMapper groupUserMapper;
-
+    @Autowired
+    private GroupInfoMapper groupInfoMapper;
     @Override
     public ICode addGroupUser(GroupUser groupUser) {
         ICode code;
@@ -59,6 +61,10 @@ public class GroupUserServiceImpl implements GroupUserService {
         if (user != null) {
             List<GroupUser> groupUsers = groupUserMapper.getGroupUser(user.getId().toString());
             if (groupUsers != null && groupUsers.size() > 0) {
+                for (GroupUser  groupUser:groupUsers) {
+                    groupUser.setGroupName(groupInfoMapper.getGroupNameById(Integer.parseInt(groupUser.getGroupCode())));
+                    groupUser.setGroupRoom("6");
+                }
                 return groupUsers;
             } else {
                 return CodeEnum.NOT_EXIST_PLAYER;
