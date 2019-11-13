@@ -1,9 +1,11 @@
 package com.yd.burst.controller;
 
+import com.yd.burst.cache.CacheKey;
 import com.yd.burst.common.Result;
 import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.ICode;
 import com.yd.burst.model.GroupUser;
+import com.yd.burst.model.RoomInfo;
 import com.yd.burst.model.User;
 import com.yd.burst.service.GroupInfoService;
 import com.yd.burst.service.GroupUserService;
@@ -100,6 +102,24 @@ public class GroupInfoController {
             return Result.fail(code);
         }
 
+    }
+
+    /**
+     * 获取群房间信息
+     * @param params
+     * @return
+     */
+    @RequestMapping("/getGroupRoomInfo")
+    public Result getGroupRoomInfo(@RequestBody Map<String, String> params){
+        if (params == null) {
+            return Result.fail(CodeEnum.VALIDATE_FAILED);
+        }
+        String groupCode = params.get("groupCode");
+        if (StringUtils.isEmpty(groupCode)) {
+            throw new ValidationException();
+        }
+        List<RoomInfo> list = groupInfoService.getGroupRoomInfo(CacheKey.GROUP_KEY+groupCode);
+        return Result.success(list);
     }
 
 }

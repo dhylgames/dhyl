@@ -6,10 +6,13 @@ import com.yd.burst.dao.GroupUserMapper;
 import com.yd.burst.dao.UserMapper;
 import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.ICode;
+import com.yd.burst.model.RoomInfo;
 import com.yd.burst.service.GroupInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @Description:
@@ -54,6 +57,11 @@ public class GroupInfoServiceImpl implements GroupInfoService {
     public String getGroupName(String groupCode) {
        String  groupName= groupInfoMapper.getGroupNameById(Integer.parseInt(groupCode));
         return groupName;
+    }
+
+    @Override
+    public List<RoomInfo> getGroupRoomInfo(String groupCode) {
+        return cacheBase.getORoomInfo(groupCode);
     }
 }
 

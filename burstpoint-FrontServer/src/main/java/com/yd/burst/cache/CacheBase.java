@@ -34,5 +34,17 @@ public class CacheBase {
         redisPool.setData4Object2Redis(CacheKey.USER_KEY + key, user);
     }
 
+    /**
+     * 获取群房间信息
+     * @param key
+     * @return
+     */
+    public List<RoomInfo> getORoomInfo(String key){
+        return (List<RoomInfo>) redisPool.getData4Object2Redis(key);
+    }
+
+
+
+
 
 }

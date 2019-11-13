@@ -13,7 +13,7 @@
 
 
     <!-- 激活组件扫描功能,扫描aop的相关组件组件 -->
-    <context:component-scan base-package="com.yd.burst.aop"/>
+    <context:component-scan base-package="com.yd.burst.*"/>
     <!-- 启动对@AspectJ注解的支持 -->
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
@@ -37,7 +37,7 @@
     </bean>
 
     <!--扫描web相关的controller-->
-    <context:component-scan base-package="com.yd.burst.controller"/>
+  <!--  <context:component-scan base-package="com.yd.burst.controller"/>-->
 
 	<!--全局异常捕捉 -->
     <context:component-scan base-package="com.yd.burst.*" use-default-filters="false">

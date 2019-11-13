@@ -2,18 +2,23 @@ package com.yd.burst.webSkt;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yd.burst.controller.GroupInfoController;
+import com.yd.burst.enums.GameOperationEnum;
+import javafx.beans.binding.IntegerBinding;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
-@ServerEndpoint(value = "/websocket/{opNum}")
+@ServerEndpoint(value = "/websocket")
 @Component
 public class WebSocket {
+    private static Logger logger = LogManager.getLogger(GroupInfoController.class);
 
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
@@ -28,18 +33,18 @@ public class WebSocket {
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
-    public void onOpen(@PathParam("opNum") String opNum, Session session) {
+    public void onOpen(Session session) {
         this.opNum = opNum;
         this.session = session;
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
-        System.out.println("有新连接加入！当前在线人数为" + getOnlineCount());
-        System.out.println("有新连接加入！opNum为" + this.opNum);
+        logger.info("有新连接加入！当前在线人数:" + this.onlineCount);
         try {
-            sendMessage("测链接");
+            sendMessage("已连接");
         } catch (IOException e) {
-            System.out.println("IO异常");
+            e.printStackTrace();
         }
+
     }
 
     /**
@@ -60,49 +65,18 @@ public class WebSocket {
     public void onMessage(String message, Session session) {
         System.out.println("来自客户端的消息:" + message);
         JSONObject object = JSON.parseObject(message);
+        logger.info("来自客户端的消息2:{}" ,object);
         //群发消息
         for (WebSocket item : webSocketSet) {
             try {
                 String msg =null;
-                switch (object.get("method").toString()){
-                    case "showCard":
-                      msg=showCard(JSON.toJSONString(object));
-                     // System.out.println(msg);
-                     break;
-                    case "startGame":
-                        msg=startGame(JSON.toJSONString(object)).toString();
-                      //  System.out.println(msg);
-                     break;
-                    case "enterRoom":
-                        msg=enteringRoom(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                     break;
-                    case "outRoom":
-                        msg=outRoom(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
+                switch (object.get("playType").toString()){
+                    case "0":
+                        msg= NNPlay(object);
                         break;
-                    case "readyStatus":
-                        msg=readyStatus(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                     break;
-                    case "integralCalc":
-                        msg=integralCalc(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                    break;
-                    case "ratioCard":
-                        msg=ratioCard(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                     break;
-                    case "openCard":
-                        //全部开牌
-                        //msg=readyStatus(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                     break;
-                    case "endGame":
-                        //游戏结束
-                        msg=endGame(JSON.toJSONString(object)).toString();
-                        //  System.out.println(msg);
-                     break;
+                    case "1":
+                        msg= FGFPlay(object);
+                        break;
                 }
                 item.sendMessage(msg);
             } catch (IOException e) {
@@ -111,7 +85,75 @@ public class WebSocket {
         }
     }
 
-        //发生错误时调用
+
+    private String NNPlay(JSONObject object){
+        int opType = Integer.parseInt(object.get("opType").toString());
+        GameOperationEnum gameOperationEnum = GameOperationEnum.getGameOperationEnum(opType);
+        String msg =null;
+        switch (gameOperationEnum){
+            case CATTLE_READY:
+                msg=showCard(JSON.toJSONString(object));
+                // System.out.println(msg);
+                break;
+            case CATTLE_GRAB_BANKER:
+                msg=startGame(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case CATTLE_DEAL:
+                msg=enteringRoom(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case CATTLE_SHOW:
+                msg=outRoom(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case CATTLE_CALC_SCORE:
+                msg=readyStatus(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+        }
+       return null;
+    }
+
+    private String FGFPlay(JSONObject object){
+        int opType = Integer.parseInt(object.get("opType").toString());
+        GameOperationEnum gameOperationEnum = GameOperationEnum.getGameOperationEnum(opType);
+        String msg =null;
+        switch (gameOperationEnum){
+            case FGF_READY:
+                msg=showCard(JSON.toJSONString(object));
+                // System.out.println(msg);
+                break;
+            case FGF_DEAL:
+                msg=startGame(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case FGF_FOLLOW_BET:
+                msg=enteringRoom(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case FGF_SEE_CARD:
+                msg=outRoom(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case FGF_COMPARE_CARD:
+                msg=readyStatus(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case FGF_DISCARD:
+                msg=integralCalc(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+            case FGF_CALC_SCORE:
+                msg=ratioCard(JSON.toJSONString(object)).toString();
+                //  System.out.println(msg);
+                break;
+        }
+        return null;
+    }
+
+
+    //发生错误时调用
      @OnError
      public void onError(Session session, Throwable error) {
      System.out.println("发生错误");
@@ -220,7 +262,7 @@ public class WebSocket {
     }
 
 
-    private Integer number(String str){
+    private void gameOperation(String str){
         Integer num = 0;
         switch (str) {
             case "2":
@@ -263,7 +305,11 @@ public class WebSocket {
                 num = 14;
                 break;
         }
-        return  num;
+        try {
+            sendMessage(num.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

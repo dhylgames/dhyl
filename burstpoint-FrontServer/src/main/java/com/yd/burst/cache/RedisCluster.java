@@ -54,6 +54,7 @@ public class RedisCluster implements RedisUtil {
 
     @Override
     public void setData4Object2Redis(String key, Object object) {
+
     }
 
     @Override
