@@ -2,22 +2,33 @@ package com.yd.burst.webSkt;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.yd.burst.cache.CacheKey;
+import com.yd.burst.cache.RedisPool;
 import com.yd.burst.controller.GroupInfoController;
 import com.yd.burst.enums.GameOperationEnum;
-import javafx.beans.binding.IntegerBinding;
+import com.yd.burst.game.CreatPoker;
+import com.yd.burst.game.NnCompare;
+import com.yd.burst.model.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
 @ServerEndpoint(value = "/websocket")
 @Component
 public class WebSocket {
+
+    @Autowired
+    private RedisPool redisPool;
+
     private static Logger logger = LogManager.getLogger(GroupInfoController.class);
 
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
@@ -91,28 +102,100 @@ public class WebSocket {
         GameOperationEnum gameOperationEnum = GameOperationEnum.getGameOperationEnum(opType);
         String msg =null;
         switch (gameOperationEnum){
-            case CATTLE_READY:
-                msg=showCard(JSON.toJSONString(object));
+            case CATTLE_READY://准备
+                msg= cattleReadyOp(object);
                 // System.out.println(msg);
                 break;
-            case CATTLE_GRAB_BANKER:
-                msg=startGame(JSON.toJSONString(object)).toString();
+            case CATTLE_GRAB_BANKER: //抢庄
+                msg= cattleGrabBanker(object);
                 //  System.out.println(msg);
                 break;
-            case CATTLE_DEAL:
-                msg=enteringRoom(JSON.toJSONString(object)).toString();
+            case CATTLE_DEAL://发牌
+                msg = sendPoker(object);
                 //  System.out.println(msg);
                 break;
-            case CATTLE_SHOW:
-                msg=outRoom(JSON.toJSONString(object)).toString();
+            case CATTLE_SHOW://亮牌
+                msg = cattleShowCard(object);
                 //  System.out.println(msg);
                 break;
-            case CATTLE_CALC_SCORE:
+            case CATTLE_CALC_SCORE: //计算分
                 msg=readyStatus(JSON.toJSONString(object)).toString();
                 //  System.out.println(msg);
                 break;
         }
-       return null;
+       return msg;
+    }
+    //牛牛亮牌
+    private String cattleShowCard(JSONObject object) {
+        String groupCode = (String)object.get("groupCode");
+        String roomCode = (String)object.get("roomCode");
+        //在数据库中查出这个用户
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        //手相判断是否有牛
+        for(int k = 0;k<players.size();k++){
+            Player player = players.get(k);
+            NnCompare compare = new NnCompare();
+            if(compare.isBull(player)){
+             //有牛的话，要计算牛几
+             players.get(k).setBull(true);
+             int nNum = compare.pointOfBull(player);
+             players.get(k).setPointOfBull(nNum);
+            }else{
+                players.get(k).setBull(false);
+            }
+        }
+        return JSON.toJSONString(players);
+    }
+
+    //牛牛发牌
+    private String sendPoker(JSONObject object) {
+        String groupCode = (String)object.get("groupCode");
+        String roomCode = (String)object.get("roomCode");
+        //在数据库中查出这个用户
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        //创建牌
+        players = new CreatPoker().CreatPoker(players);
+        //把牌写入redis
+        redisPool.setData4Object2Redis(key, players);
+        return JSON.toJSONString(players);
+    }
+
+    //牛牛抢庄
+    private String cattleGrabBanker(JSONObject object) {
+        String groupCode = (String)object.get("groupCode");
+        String roomCode = (String)object.get("roomCode");
+        //在数据库中查出这个用户
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        //从玩家中随机一个做庄家
+        int banker = 0;
+        if(players.size()>0){
+            banker = new Random().nextInt(players.size());
+        }
+        players.get(banker).setBanker(true);
+        redisPool.setData4Object2Redis(key, players);
+        return  JSON.toJSONString(players);
+    }
+
+    //牛牛准备的逻辑
+    private String cattleReadyOp(JSONObject object) {
+        //把这个用户根据群号，房间号插入redis中，
+        //进入房间的时候要根据群号，房间号增加用户信息
+        String userId = (String)object.get("userId");
+        String groupCode = (String)object.get("groupCode");
+        String roomCode = (String)object.get("roomCode");
+       //在数据库中查出这个用户
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+         for(Player player : players){
+             if(player.getUserId() == Integer.parseInt(userId)){
+                 player.setReadyState(1);
+             }
+         }
+        redisPool.setData4Object2Redis(key, players);
+        return  JSON.toJSONString(players);
     }
 
     private String FGFPlay(JSONObject object){

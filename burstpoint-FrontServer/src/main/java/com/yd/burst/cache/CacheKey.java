@@ -43,9 +43,11 @@ public class CacheKey {
     public static final String NPC_PLAYER_KEY = "NPC_PLAYER_KEY";
 
     //群key
-    public static final String GROUP_KEY = "group_KEY_";
+    public static final String GROUP_KEY = "GROUP_KEY_";
 
     //房间key
-    public static final String ROOM_KEY = "room_KEY_";
+    public static final String ROOM_KEY = "ROOM_KEY_";
+
+    public static final String GROUP_ROOM_KEY = "GROUP_ROOM_KEY_";
 
 }

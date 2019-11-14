@@ -1,6 +1,7 @@
 package com.yd.burst.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Auther: kelly
@@ -11,6 +12,8 @@ public class RoomInfo implements Serializable {
     private int index;
     private int personNum;
     private int level;
+
+    private List<Player> player;
 
     public int getIndex() {
         return index;
@@ -34,5 +37,13 @@ public class RoomInfo implements Serializable {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public List<Player> getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(List<Player> player) {
+        this.player = player;
     }
 }
