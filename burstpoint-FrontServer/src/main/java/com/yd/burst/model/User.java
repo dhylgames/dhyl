@@ -29,10 +29,6 @@ public class User extends BaseEntity{
      */
     private String birthday;
     /*
-     *  用户类型  1-群主  2-普通用户
-     */
-    private String  userType;
-    /*
      * 用户状态 0-未激活 1-正常  2-禁用-3-删除
      */
     private String  status;
@@ -81,13 +77,6 @@ public class User extends BaseEntity{
         this.birthday = birthday;
     }
 
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
 
     public String getSex() {
         return sex;

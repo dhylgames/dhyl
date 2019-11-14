@@ -8,7 +8,6 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="birthday" jdbcType="VARCHAR" property="birthday" />
-    <result column="user_type" jdbcType="VARCHAR" property="userType" />
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="create_time" jdbcType="VARCHAR" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
@@ -17,7 +16,7 @@
     <result column="sex" jdbcType="VARCHAR" property="sex" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, login_name, password, user_name, phone, birthday, user_type, status,
+    id, login_name, password, user_name, phone, birthday, status,
     create_time, create_by, update_time, update_by, sex
   </sql>
 
@@ -45,7 +44,7 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into q_user (login_name, password, user_name,
-      phone, birthday, user_type,
+      phone, birthday,
       status, create_time, create_by,
       update_time, update_by, sex)
     values (#{loginName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
