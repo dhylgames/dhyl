@@ -22,7 +22,7 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 
-@ServerEndpoint(value = "/websocket")
+@ServerEndpoint(value = "/websocket",configurator=MyEndpointConfigure.class)
 @Component
 public class WebSocket {
 
@@ -119,12 +119,26 @@ public class WebSocket {
                 //  System.out.println(msg);
                 break;
             case CATTLE_CALC_SCORE: //计算分
-                msg=readyStatus(JSON.toJSONString(object)).toString();
+                msg= cattleCalcScore(object);
                 //  System.out.println(msg);
                 break;
         }
        return msg;
     }
+    //计算得分
+    private String cattleCalcScore(JSONObject object) {
+        String groupCode = (String)object.get("groupCode");
+        String roomCode = (String)object.get("roomCode");
+        //在数据库中查出这个用户
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        NnCompare compare = new NnCompare();
+        players = compare.compare(players);
+        redisPool.setData4Object2Redis(key, players);
+        //战绩插入数据库
+        return JSON.toJSONString(players);
+    }
+
     //牛牛亮牌
     private String cattleShowCard(JSONObject object) {
         String groupCode = (String)object.get("groupCode");

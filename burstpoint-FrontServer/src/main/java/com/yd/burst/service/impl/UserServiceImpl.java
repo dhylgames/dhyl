@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
         user.setCreateTime(DateUtil.dateToStr(new Date()));
         user.setUpdateTime(DateUtil.dateToStr(new Date()));
         user.setStatus(UserStatusEnum.NORMAL.getCode());
-        user.setUserType(UserStatusEnum.USER.getCode());
+       // user.setUserType(UserStatusEnum.USER.getCode());
         user.setUserName(RandomStringUtils.random(4, "abcdefgABCDEFG123456789")+user.getPhone());
         user.setLoginName(RandomStringUtils.random(4, "abcdefgABCDEFG123456789")+user.getPhone());
         int count = userMapper.insert(user);

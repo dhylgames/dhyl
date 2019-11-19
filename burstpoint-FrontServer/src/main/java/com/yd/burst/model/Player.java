@@ -1,11 +1,13 @@
 package com.yd.burst.model;
 
+import java.io.Serializable;
+
 /**
  * @Auther: kelly
  * @Date: 2019/11/14 01:41
  * @Description:
  */
-public class Player {
+public class Player implements Serializable {
 
     private int userId; //用户id
 

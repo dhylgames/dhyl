@@ -7,7 +7,6 @@ package com.yd.burst.model;
  * @author Waylon
  */
 public class GroupRoom extends BaseEntity{
-    private int id;
    /**
     * 群号
     */
@@ -46,12 +45,4 @@ public class GroupRoom extends BaseEntity{
         this.groupRoomStatus = groupRoomStatus;
     }
 
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }

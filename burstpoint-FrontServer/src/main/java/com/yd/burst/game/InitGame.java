@@ -4,8 +4,13 @@ import com.yd.burst.cache.CacheKey;
 import com.yd.burst.cache.RedisPool;
 import com.yd.burst.dao.GroupRoomMapper;
 import com.yd.burst.model.GroupRoom;
+import com.yd.burst.model.Player;
 import com.yd.burst.model.RoomInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,7 +23,8 @@ import java.util.List;
  * @Description:
  */
 @Component
-public class InitGame {
+public class InitGame implements ApplicationListener<ContextRefreshedEvent> {
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final int DEFAULT_PERSON_NUM = 6;
 
@@ -45,6 +51,20 @@ public class InitGame {
             }
             redisPool.setData4Object2Redis(key,roomInfos);
         }
+        List<Player> players = new ArrayList<>();
+        Player player = new Player();
+        player.setUserId(1);
+        player.setReadyState(0);
+        players.add(player);
+        String key2 = CacheKey.GROUP_ROOM_KEY+11;
+        redisPool.setData4Object2Redis(key2,players);
+    }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        if(contextRefreshedEvent.getApplicationContext().getParent() == null){
+            logger.info("初始化开始。。。");
+            setGroupRoomInfo();
+        }
     }
 }
