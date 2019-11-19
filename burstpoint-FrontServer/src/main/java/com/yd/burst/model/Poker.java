@@ -1,11 +1,13 @@
 package com.yd.burst.model;
 
+import java.io.Serializable;
+
 /**
  * @Auther: kelly
  * @Date: 2019/11/14 23:42
  * @Description:
  */
-public class Poker {
+public class Poker implements Serializable {
     private String color;
     private String point;
 
