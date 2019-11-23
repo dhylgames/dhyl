@@ -8,6 +8,7 @@ import com.yd.burst.controller.GroupInfoController;
 import com.yd.burst.enums.GameOperationEnum;
 import com.yd.burst.game.CreatPoker;
 import com.yd.burst.game.NnCompare;
+import com.yd.burst.model.BeanForm;
 import com.yd.burst.model.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,16 +16,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
+import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-
-@ServerEndpoint(value = "/websocket",configurator=MyEndpointConfigure.class)
+/**
+ * userId 用户id
+ * groupId 群号
+ * roomId  房间id
+ */
+@ServerEndpoint(value = "/websocket/{groupCode}/{roomCode}",configurator=MyEndpointConfigure.class)
 @Component
-public class WebSocket {
+public class WebSocket implements Serializable {
 
     @Autowired
     private RedisPool redisPool;
@@ -35,27 +45,73 @@ public class WebSocket {
     private static int onlineCount = 0;
 
     //concurrent包的线程安全Set，用来存放每个客户端对应的WebSocket对象。
-    private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<WebSocket>();
+    private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<>();
+
+    //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。若要实现服务端与单一客户端通信的话，可以使用Map来存放，其中Key可以为用户标识
+    private static ConcurrentMap<String, CopyOnWriteArraySet<WebSocket>> roomWebSockets = new ConcurrentHashMap<>();
 
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
-    private Session session;
-    private String opNum;
+
+    private static CopyOnWriteArraySet<Session> sessionSet;
+
 
     /**
-     * 连接建立成功调用的方法*/
+     * 连接建立成功调用的方法
+     **/
     @OnOpen
-    public void onOpen(Session session) {
-        this.opNum = opNum;
-        this.session = session;
-        webSocketSet.add(this);     //加入set中
-        addOnlineCount();           //在线数加1
+    public void onOpen(Session session, @PathParam("groupCode")String userId, @PathParam("groupCode")String groupCode, @PathParam("roomCode")String roomCode) {
+        //根据当前用户来查出是那个群，那个房间，然后根据群和房间存放websocket
+        //根据当前群号房间好拼成key,存入redis,有利于游戏是，根据房间的所有在玩的玩家统一消息发送
+        String websocketKey = CacheKey.WEBSOCKET_KEY + groupCode + roomCode;
+        CopyOnWriteArraySet<WebSocket> roomWebSocket = roomWebSockets.get(websocketKey);
+        if(null == roomWebSocket){
+            roomWebSocket = new CopyOnWriteArraySet<>();
+        }
+        if(roomWebSocket.size()>0){
+            for(WebSocket sessionWebSocket:roomWebSocket){
+                CopyOnWriteArraySet<Session> sessionSet = sessionWebSocket.getSessionSet();
+                if(sessionSet==null){
+                    sessionSet = new CopyOnWriteArraySet<>();
+                }
+                sessionSet.add(session);
+                sessionWebSocket.setSessionSet(sessionSet);
+            }
+        }else{
+            CopyOnWriteArraySet<Session> sessionSet = new CopyOnWriteArraySet<>();
+            sessionSet.add(session);
+            setSessionSet(sessionSet);
+        }
+        setRoomPlayer(userId,groupCode,roomCode);
+        roomWebSocket.add(this);     //分组的，加入set中
+        webSocketSet.add(this); //全局的
+        roomWebSockets.put(websocketKey,roomWebSocket);
+      //  addOnlineCount();           //在线数加1
         logger.info("有新连接加入！当前在线人数:" + this.onlineCount);
         try {
-            sendMessage("已连接");
+            session.getBasicRemote().sendText("已连接");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void setRoomPlayer(String userId,String groupCode, String roomCode){
+        String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        if(null==players) players = new ArrayList<>();
+        boolean isExist = false;
+        for(Player player: players){
+         if(userId.equals(player.getUserId())){
+             isExist = true;
+             break;
+         }
+        }
+        if(!isExist){
+            Player player = new Player();
+            player.setUserId(Integer.parseInt(userId));
+            players.add(player);
+        }
+        redisPool.setData4Object2Redis(key,players);
     }
 
     /**
@@ -76,20 +132,23 @@ public class WebSocket {
     public void onMessage(String message, Session session) {
         System.out.println("来自客户端的消息:" + message);
         JSONObject object = JSON.parseObject(message);
+        BeanForm beanForm= object.toJavaObject(BeanForm.class);
+        String websocketKey = CacheKey.WEBSOCKET_KEY  + beanForm.getGroupCode()+beanForm.getRoomCode();
         logger.info("来自客户端的消息2:{}" ,object);
+        CopyOnWriteArraySet<WebSocket> roomWebSocket = roomWebSockets.get(websocketKey);
         //群发消息
-        for (WebSocket item : webSocketSet) {
+        for (WebSocket item : roomWebSocket) {
             try {
                 String msg =null;
-                switch (object.get("playType").toString()){
+                switch (beanForm.getPlayType()){
                     case "0":
-                        msg= NNPlay(object);
+                        msg= NNPlay(beanForm);
                         break;
                     case "1":
-                        msg= FGFPlay(object);
+                        msg= FGFPlay(beanForm);
                         break;
                 }
-                item.sendMessage(msg);
+                sendMessage(item,msg);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -97,39 +156,39 @@ public class WebSocket {
     }
 
 
-    private String NNPlay(JSONObject object){
-        int opType = Integer.parseInt(object.get("opType").toString());
+    private String NNPlay(BeanForm beanForm){
+        int opType = Integer.parseInt(beanForm.getOpType());
         GameOperationEnum gameOperationEnum = GameOperationEnum.getGameOperationEnum(opType);
         String msg =null;
         switch (gameOperationEnum){
             case CATTLE_READY://准备
-                msg= cattleReadyOp(object);
+                msg= cattleReadyOp(beanForm);
                 // System.out.println(msg);
                 break;
             case CATTLE_GRAB_BANKER: //抢庄
-                msg= cattleGrabBanker(object);
+                msg= cattleGrabBanker(beanForm);
                 //  System.out.println(msg);
                 break;
             case CATTLE_DEAL://发牌
-                msg = sendPoker(object);
+                msg = sendPoker(beanForm);
                 //  System.out.println(msg);
                 break;
             case CATTLE_SHOW://亮牌
-                msg = cattleShowCard(object);
+                msg = cattleShowCard(beanForm);
                 //  System.out.println(msg);
                 break;
             case CATTLE_CALC_SCORE: //计算分
-                msg= cattleCalcScore(object);
+                msg= cattleCalcScore(beanForm);
                 //  System.out.println(msg);
                 break;
         }
        return msg;
     }
     //计算得分
-    private String cattleCalcScore(JSONObject object) {
-        String groupCode = (String)object.get("groupCode");
-        String roomCode = (String)object.get("roomCode");
-        //在数据库中查出这个用户
+    private String cattleCalcScore(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
+        //在数据库中查出玩家
         String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         NnCompare compare = new NnCompare();
@@ -140,9 +199,9 @@ public class WebSocket {
     }
 
     //牛牛亮牌
-    private String cattleShowCard(JSONObject object) {
-        String groupCode = (String)object.get("groupCode");
-        String roomCode = (String)object.get("roomCode");
+    private String cattleShowCard(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
         //在数据库中查出这个用户
         String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
@@ -163,9 +222,9 @@ public class WebSocket {
     }
 
     //牛牛发牌
-    private String sendPoker(JSONObject object) {
-        String groupCode = (String)object.get("groupCode");
-        String roomCode = (String)object.get("roomCode");
+    private String sendPoker(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
         //在数据库中查出这个用户
         String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
@@ -177,9 +236,9 @@ public class WebSocket {
     }
 
     //牛牛抢庄
-    private String cattleGrabBanker(JSONObject object) {
-        String groupCode = (String)object.get("groupCode");
-        String roomCode = (String)object.get("roomCode");
+    private String cattleGrabBanker(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
         //在数据库中查出这个用户
         String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
@@ -194,12 +253,12 @@ public class WebSocket {
     }
 
     //牛牛准备的逻辑
-    private String cattleReadyOp(JSONObject object) {
+    private String cattleReadyOp(BeanForm beanForm) {
         //把这个用户根据群号，房间号插入redis中，
         //进入房间的时候要根据群号，房间号增加用户信息
-        String userId = (String)object.get("userId");
-        String groupCode = (String)object.get("groupCode");
-        String roomCode = (String)object.get("roomCode");
+        String userId = beanForm.getUserId();
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
        //在数据库中查出这个用户
         String key = CacheKey.GROUP_ROOM_KEY+groupCode+roomCode;
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
@@ -212,37 +271,37 @@ public class WebSocket {
         return  JSON.toJSONString(players);
     }
 
-    private String FGFPlay(JSONObject object){
-        int opType = Integer.parseInt(object.get("opType").toString());
+    private String FGFPlay(BeanForm beanForm){
+        int opType = Integer.parseInt(beanForm.getOpType());
         GameOperationEnum gameOperationEnum = GameOperationEnum.getGameOperationEnum(opType);
         String msg =null;
         switch (gameOperationEnum){
             case FGF_READY:
-                msg=showCard(JSON.toJSONString(object));
+                msg=showCard(JSON.toJSONString(beanForm));
                 // System.out.println(msg);
                 break;
             case FGF_DEAL:
-                msg=startGame(JSON.toJSONString(object)).toString();
+                msg=startGame(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
             case FGF_FOLLOW_BET:
-                msg=enteringRoom(JSON.toJSONString(object)).toString();
+                msg=enteringRoom(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
             case FGF_SEE_CARD:
-                msg=outRoom(JSON.toJSONString(object)).toString();
+                msg=outRoom(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
             case FGF_COMPARE_CARD:
-                msg=readyStatus(JSON.toJSONString(object)).toString();
+                msg=readyStatus(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
             case FGF_DISCARD:
-                msg=integralCalc(JSON.toJSONString(object)).toString();
+                msg=integralCalc(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
             case FGF_CALC_SCORE:
-                msg=ratioCard(JSON.toJSONString(object)).toString();
+                msg=ratioCard(JSON.toJSONString(beanForm)).toString();
                 //  System.out.println(msg);
                 break;
         }
@@ -258,8 +317,12 @@ public class WebSocket {
      }
 
 
-     public void sendMessage(String message) throws IOException {
-     this.session.getBasicRemote().sendText(message);
+     public void sendMessage(WebSocket webSocket,String message) throws IOException {
+         CopyOnWriteArraySet<Session> sessionSet = webSocket.getSessionSet();
+         for(Session session:sessionSet){
+             session.getBasicRemote().sendText(message);
+         }
+
      //this.session.getAsyncRemote().sendText(message);
      }
 
@@ -268,13 +331,12 @@ public class WebSocket {
       * 群发自定义消息
       * */
     public static void sendInfo(String message) throws IOException {
-        for (WebSocket item : webSocketSet) {
-            try {
-                item.sendMessage(message);
+        /*for (WebSocket item : webSocketSet) {
+            try {.sendMessage(item,message);
             } catch (IOException e) {
                 continue;
             }
-        }
+        }*/
     }
 
     public static synchronized int getOnlineCount() {
@@ -358,57 +420,6 @@ public class WebSocket {
         return  null;
     }
 
-
-    private void gameOperation(String str){
-        Integer num = 0;
-        switch (str) {
-            case "2":
-                num = 2;
-                break;
-            case "3":
-                num = 3;
-                break;
-            case "4":
-                num = 4;
-                break;
-            case "5":
-                num = 5;
-                break;
-            case "6":
-                num = 6;
-                break;
-            case "7":
-                num = 7;
-                break;
-            case "8":
-                num = 8;
-                break;
-            case "9":
-                num = 9;
-                break;
-            case "10":
-                num = 10;
-                break;
-            case "J":
-                num = 11;
-                break;
-            case "Q":
-                num = 12;
-                break;
-            case "K":
-                num = 13;
-                break;
-            case "A":
-                num = 14;
-                break;
-        }
-        try {
-            sendMessage(num.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      *  当局游戏结束
      * @param obj Json 对象 {"roomId":123456,"user":123456,"method":"endGame"}
@@ -416,5 +427,13 @@ public class WebSocket {
      */
     public String endGame(Object obj){
         return  null;
+    }
+
+    public CopyOnWriteArraySet<Session> getSessionSet() {
+        return sessionSet;
+    }
+
+    public void setSessionSet(CopyOnWriteArraySet<Session> sessionSet) {
+        WebSocket.sessionSet = sessionSet;
     }
 }

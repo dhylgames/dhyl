@@ -1,6 +1,7 @@
 package com.yd.burst.model;
 
 
+import java.util.List;
 
 /**
  * 群房间
@@ -20,6 +21,8 @@ public class GroupRoom extends BaseEntity{
      * 状态  0-正常 1-禁用
      */
     private String groupRoomStatus;
+
+    private List<GroupUser> groupUserList;
 
     public String getGroupCode() {
         return groupCode;
@@ -45,4 +48,11 @@ public class GroupRoom extends BaseEntity{
         this.groupRoomStatus = groupRoomStatus;
     }
 
+    public List<GroupUser> getGroupUserList() {
+        return groupUserList;
+    }
+
+    public void setGroupUserList(List<GroupUser> groupUserList) {
+        this.groupUserList = groupUserList;
+    }
 }

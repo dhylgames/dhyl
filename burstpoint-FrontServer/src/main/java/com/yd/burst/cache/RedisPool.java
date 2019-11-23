@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.io.Serializable;
+
 /**
  *
  * Redis连接池工具类
  * @author Will
  */
-public class RedisPool implements RedisUtil {
+public class RedisPool implements RedisUtil, Serializable {
 
     private static Logger logger = LogManager.getLogger(RedisPool.class);
 

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: kelly
@@ -37,27 +39,28 @@ public class InitGame implements ApplicationListener<ContextRefreshedEvent> {
     public void setGroupRoomInfo(){
         //第一步，先查询数据库
        List<GroupRoom> roomList = groupRoomMapper.load();
-        //第二步，查出来的数据存入redis
-        for(GroupRoom groupRoom:roomList){
-            String key = CacheKey.GROUP_KEY + groupRoom.getId();
-            //先
-            List<RoomInfo> roomInfos = new ArrayList<>();
-            for(int i=1;i<=this.DEFAULT_PERSON_NUM;i++){
-                RoomInfo roomInfo = new RoomInfo();
-                roomInfo.setIndex(i);
-                roomInfo.setPersonNum(0);
-                roomInfo.setLevel(1);
-                roomInfos.add(roomInfo);
-            }
-            redisPool.setData4Object2Redis(key,roomInfos);
+       //按群号分组
+       Map<String, List<GroupRoom>> map = roomList.stream().collect(Collectors.groupingBy(GroupRoom::getGroupCode));
+        for(String groupCode:map.keySet()){
+            List<GroupRoom> list = map.get(groupCode);
+            //第二步，查出来的数据存入redis
+            String key = CacheKey.GROUP_KEY + groupCode;
+            redisPool.setData4Object2Redis(key,list);
+
+           /*for(GroupRoom groupRoom:list){ //房间
+               List<Player> players = new ArrayList<>();
+               String key2 = CacheKey.GROUP_ROOM_KEY+11;
+               redisPool.setData4Object2Redis(key2,players);
+            }*/
         }
-        List<Player> players = new ArrayList<>();
+
+        /*List<Player> players = new ArrayList<>();
         Player player = new Player();
         player.setUserId(1);
         player.setReadyState(0);
         players.add(player);
         String key2 = CacheKey.GROUP_ROOM_KEY+11;
-        redisPool.setData4Object2Redis(key2,players);
+        redisPool.setData4Object2Redis(key2,players);*/
     }
 
     @Override

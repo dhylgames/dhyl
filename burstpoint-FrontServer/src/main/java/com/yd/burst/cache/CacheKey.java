@@ -50,4 +50,6 @@ public class CacheKey {
 
     public static final String GROUP_ROOM_KEY = "GROUP_ROOM_KEY_";
 
+    public static final String WEBSOCKET_KEY = "WEBSOCKET_KEY_";
+
 }
