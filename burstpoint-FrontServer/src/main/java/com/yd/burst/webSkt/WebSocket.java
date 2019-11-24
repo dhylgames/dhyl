@@ -133,7 +133,7 @@ public class WebSocket implements Serializable {
             players.add(player);
         }
         redisPool.setData4Object2Redis(key, players);
-
+        setUserToRoom(players, groupCode, roomCode);
 
     }
 
