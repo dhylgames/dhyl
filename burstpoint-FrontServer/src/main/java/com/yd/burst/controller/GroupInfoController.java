@@ -132,25 +132,25 @@ public class GroupInfoController {
         if (params == null) {
             return Result.fail(CodeEnum.VALIDATE_FAILED);
         }
-//        String token = request.getHeader("token");
-//        String phone = params.get("phone");
+        String token = request.getHeader("token");
+        String phone = params.get("phone");
         String groupCode = params.get("groupCode");
-        if ( //StringUtils.isEmpty(token) ||
-              //  StringUtils.isEmpty(phone)||
+        if ( StringUtils.isEmpty(token) ||
+                StringUtils.isEmpty(phone)||
                 StringUtils.isEmpty(groupCode)) {
             throw new ValidationException();
         }
-//        if(phone.equals(JWTUtil.decode(token))) {
+        if(phone.equals(JWTUtil.decode(token))) {
             List<GroupRoom> list = groupInfoService.getGroupRoomInfo(CacheKey.GROUP_KEY + groupCode);
 
-            if (list.size()>0) {
+            if (null!=list && list.size()>0) {
                 return Result.success(list);
             }else{
-                return  Result.fail(CodeEnum.NOT_EXIST_PLAYER);
+                return  Result.fail(CodeEnum.NOT_EXIST_GROUP_ROOM);
             }
-//        }else{
-//            return Result.fail(CodeEnum.ERROR_CODE);
-//        }
+        }else{
+            return Result.fail(CodeEnum.ERROR_CODE);
+        }
     }
 
 }

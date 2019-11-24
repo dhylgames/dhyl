@@ -146,7 +146,7 @@ public class WebSocket implements Serializable {
             userList.add(user);
         }
         //往群号添加结构
-        List<GroupRoom> roomList = (List<GroupRoom>) redisPool.getData4Object2Redis(groupCode);
+        List<GroupRoom> roomList = (List<GroupRoom>) redisPool.getData4Object2Redis(CacheKey.GROUP_KEY+groupCode);
         for (GroupRoom room : roomList) {
             if (room.getId() == Integer.parseInt(roomCode)) {
                 room.setGroupUserList(userList);
