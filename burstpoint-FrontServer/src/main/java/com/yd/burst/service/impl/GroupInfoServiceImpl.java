@@ -3,10 +3,9 @@ package com.yd.burst.service.impl;
 import com.yd.burst.cache.CacheBase;
 import com.yd.burst.dao.GroupInfoMapper;
 import com.yd.burst.dao.GroupUserMapper;
-import com.yd.burst.dao.UserMapper;
 import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.ICode;
-import com.yd.burst.model.RoomInfo;
+import com.yd.burst.model.GroupRoom;
 import com.yd.burst.service.GroupInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +59,7 @@ public class GroupInfoServiceImpl implements GroupInfoService {
     }
 
     @Override
-    public List<RoomInfo> getGroupRoomInfo(String groupCode) {
+    public List<GroupRoom> getGroupRoomInfo(String groupCode) {
         return cacheBase.getORoomInfo(groupCode);
     }
 }

@@ -13,7 +13,8 @@ import java.util.Random;
  * @Description:
  */
 public class CreatPoker {
-    private static final String[] colors = { "黑桃", "红桃", "梅花", "方块" };
+    //4"黑桃", 3"红桃", 2"梅花", 1"方块"
+    private static final String[] colors = { "1", "2", "3", "4" };
     private static final String[] points = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K" };
     public List<Player> CreatPoker(List<Player> list) {
         for (int i = 0; i < list.size(); i++) {
@@ -27,7 +28,6 @@ public class CreatPoker {
                 list.get(i).setOneOfPocket(k,poker);
             }
         }
-        System.out.println("send card is:"+list);
         return list;
     }
 

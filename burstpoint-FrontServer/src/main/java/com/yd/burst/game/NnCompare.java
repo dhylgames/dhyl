@@ -87,11 +87,11 @@ public class NnCompare {
             newList.add(player);
         }
         if(winNum==list.size()-1){
-            banker.setWinAll(true);
-            banker.setFailAll(false);
+            banker.setIsWinAll(1); //通赢
         }else if(winNum==-(list.size()-1)){
-            banker.setFailAll(true);
-            banker.setWinAll(false);
+            banker.setIsWinAll(2);  //通赔
+        }else{
+            banker.setIsWinAll(0); //普通
         }
         newList.add(banker);
         return newList;

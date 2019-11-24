@@ -21,6 +21,8 @@ public enum GameOperationEnum {
     FGF_COMPARE_CARD(15,"比牌"),
     FGF_DISCARD(16,"弃牌"),
     FGF_CALC_SCORE(17,"计算分"),
+
+    GAME_AGAIN(00, "重新开始"),
     ;
 
 

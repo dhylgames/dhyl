@@ -22,7 +22,7 @@ public class GroupRoom extends BaseEntity{
      */
     private String groupRoomStatus;
 
-    private List<GroupUser> groupUserList;
+    private List<User> groupUserList;
 
     public String getGroupCode() {
         return groupCode;
@@ -48,11 +48,11 @@ public class GroupRoom extends BaseEntity{
         this.groupRoomStatus = groupRoomStatus;
     }
 
-    public List<GroupUser> getGroupUserList() {
+    public List<User> getGroupUserList() {
         return groupUserList;
     }
 
-    public void setGroupUserList(List<GroupUser> groupUserList) {
+    public void setGroupUserList(List<User> groupUserList) {
         this.groupUserList = groupUserList;
     }
 }

@@ -22,8 +22,7 @@ public class Player implements Serializable {
     private Boolean isBanker;  //是否庄家
     private long score;  //当局输赢分数
 
-    private boolean winAll; //通赢
-    private boolean failAll; //通赔
+    private int IsWinAll; //通赢或通赔 0:普通  1:通赢 2:通赔
 
 
     public int getReadyState() {
@@ -107,20 +106,12 @@ public class Player implements Serializable {
         this.score = score;
     }
 
-    public boolean isWinAll() {
-        return winAll;
+    public int getIsWinAll() {
+        return IsWinAll;
     }
 
-    public void setWinAll(boolean winAll) {
-        this.winAll = winAll;
-    }
-
-    public boolean isFailAll() {
-        return failAll;
-    }
-
-    public void setFailAll(boolean failAll) {
-        this.failAll = failAll;
+    public void setIsWinAll(int isWinAll) {
+        IsWinAll = isWinAll;
     }
 
     public Poker getBiggestCards(Poker[] pocket) { // 获取手牌中的最大牌:有个问题没解决，如果出现点数相同，花色不同

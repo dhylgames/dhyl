@@ -13,6 +13,7 @@ public class BeanForm implements Serializable {
     private String userId;
     private String groupCode;
     private String roomCode;
+    private int issue;
 
     public String getPlayType() {
         return playType;
@@ -52,5 +53,13 @@ public class BeanForm implements Serializable {
 
     public void setRoomCode(String roomCode) {
         this.roomCode = roomCode;
+    }
+
+    public int getIssue() {
+        return issue;
+    }
+
+    public void setIssue(int issue) {
+        this.issue = issue;
     }
 }

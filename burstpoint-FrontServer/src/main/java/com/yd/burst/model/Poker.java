@@ -129,22 +129,7 @@ public class Poker implements Serializable {
     }
 
     public int valuesOfColor(Poker poker) { // 花色的权值
-        int values = 0;
-        switch (poker.point) {
-            case "黑桃":
-                values = 4;
-                break;
-            case "红桃":
-                values = 3;
-                break;
-            case "梅花":
-                values = 2;
-                break;
-            case "方块":
-                values = 1;
-                break;
-        }
-        return values;
+        return Integer.parseInt(poker.color);
     }
 
 }

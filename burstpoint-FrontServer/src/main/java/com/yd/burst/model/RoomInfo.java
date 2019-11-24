@@ -9,19 +9,12 @@ import java.util.List;
  * @Description:
  */
 public class RoomInfo implements Serializable {
-    private int index;
+    private int id;
     private int personNum;
     private int level;
 
-    private List<Player> player;
+    private List<User> userList;
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 
     public int getPersonNum() {
         return personNum;
@@ -39,11 +32,19 @@ public class RoomInfo implements Serializable {
         this.level = level;
     }
 
-    public List<Player> getPlayer() {
-        return player;
+    public int getId() {
+        return id;
     }
 
-    public void setPlayer(List<Player> player) {
-        this.player = player;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
     }
 }

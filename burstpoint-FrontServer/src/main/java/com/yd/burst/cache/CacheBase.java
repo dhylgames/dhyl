@@ -39,8 +39,8 @@ public class CacheBase {
      * @param key
      * @return
      */
-    public List<RoomInfo> getORoomInfo(String key){
-        return (List<RoomInfo>) redisPool.getData4Object2Redis(key);
+    public List<GroupRoom> getORoomInfo(String key){
+        return (List<GroupRoom>) redisPool.getData4Object2Redis(key);
     }
 
 

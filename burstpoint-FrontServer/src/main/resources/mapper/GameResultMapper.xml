@@ -25,4 +25,31 @@
     from q_game_result
   </select>
 
+  <insert id="saveGameResultBatch" parameterType="java.util.List">
+   insert int q_game_result(group_code,
+     group_room_id,
+     group_user_id,
+     issue,
+     result,
+     create_time,
+     create_by,
+     update_time,
+     update_by)
+   values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.group_code,jdbcType=VARCHAR},
+      #{item.group_room_id,jdbcType=VARCHAR},
+      #{item.group_user_id,jdbcType=VARCHAR},
+      #{item.issue,jdbcType=INTEGER},
+      #{item.result,jdbcType=VARCHAR},
+      #{item.create_time,jdbcType=DECIMAL},
+      #{item.create_by,jdbcType=VARCHAR},
+      #{item.update_time,jdbcType=VARCHAR},
+      #{item.update_by,jdbcType=VARCHAR}
+      )
+    </foreach>
+
+  </insert>
+
 </mapper>

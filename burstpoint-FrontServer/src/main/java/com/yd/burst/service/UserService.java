@@ -49,4 +49,6 @@ public interface UserService {
      *  @param userName
      */
     ICode updateByPhone(String phone,String sex,String userName);
+
+    User selectUserById(int id);
 }

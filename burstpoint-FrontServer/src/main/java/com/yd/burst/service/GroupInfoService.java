@@ -2,7 +2,7 @@ package com.yd.burst.service;
 
 
 import com.yd.burst.enums.ICode;
-import com.yd.burst.model.RoomInfo;
+import com.yd.burst.model.GroupRoom;
 
 import java.util.List;
 
@@ -18,5 +18,5 @@ public interface GroupInfoService {
 
     String getGroupName(String groupCode);
 
-    List<RoomInfo> getGroupRoomInfo(String groupCode);
+    List<GroupRoom> getGroupRoomInfo(String groupCode);
 }

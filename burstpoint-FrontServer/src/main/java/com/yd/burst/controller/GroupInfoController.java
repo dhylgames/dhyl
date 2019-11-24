@@ -4,6 +4,7 @@ import com.yd.burst.cache.CacheKey;
 import com.yd.burst.common.Result;
 import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.ICode;
+import com.yd.burst.model.GroupRoom;
 import com.yd.burst.model.GroupUser;
 import com.yd.burst.model.RoomInfo;
 import com.yd.burst.model.User;
@@ -140,7 +141,8 @@ public class GroupInfoController {
             throw new ValidationException();
         }
 //        if(phone.equals(JWTUtil.decode(token))) {
-            List<RoomInfo> list = groupInfoService.getGroupRoomInfo(CacheKey.GROUP_KEY + groupCode);
+            List<GroupRoom> list = groupInfoService.getGroupRoomInfo(CacheKey.GROUP_KEY + groupCode);
+
             if (list.size()>0) {
                 return Result.success(list);
             }else{
