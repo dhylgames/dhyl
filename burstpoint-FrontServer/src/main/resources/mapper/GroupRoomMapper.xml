@@ -15,7 +15,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, group_code, group_room_type, group_room_status,
-    create_time, create_by, update_time, update_by,playerNum,baseScore
+    create_time, create_by, update_time, update_by,player_num,base_score
   </sql>
 
 

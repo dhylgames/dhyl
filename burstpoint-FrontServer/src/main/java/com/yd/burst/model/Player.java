@@ -22,6 +22,10 @@ public class Player implements Serializable {
     private Boolean isBanker;  //是否庄家
     private long score;  //当局输赢分数
 
+    private int playerNum;
+
+    private int baseScore;
+
     private int IsWinAll; //通赢或通赔 0:普通  1:通赢 2:通赔
 
 
@@ -127,4 +131,19 @@ public class Player implements Serializable {
 
     }
 
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
+    public void setPlayerNum(int playerNum) {
+        this.playerNum = playerNum;
+    }
+
+    public int getBaseScore() {
+        return baseScore;
+    }
+
+    public void setBaseScore(int baseScore) {
+        this.baseScore = baseScore;
+    }
 }
