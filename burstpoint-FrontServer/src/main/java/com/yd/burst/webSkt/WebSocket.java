@@ -101,7 +101,14 @@ public class WebSocket implements Serializable {
       //  addOnlineCount();           //在线数加1
         logger.info("有新连接加入！当前在线人数:" + this.onlineCount);
         try {
-            session.getBasicRemote().sendText("已连接");
+            String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
+            List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+            String playerStr = JSON.toJSONString(players);
+            //CopyOnWriteArraySet<WebSocket> roomWebSocket2 = roomWebSockets.get(websocketKey);
+            for (WebSocket item : roomWebSocket) {
+                sendMessage(item,playerStr);
+            }
+          //  session.getBasicRemote().sendText("已连接");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -224,9 +231,50 @@ public class WebSocket implements Serializable {
                 break;
             case GAME_AGAIN:
                 msg = clearGameData(beanForm);
+                break;
+            case CATTLE_BACK:
+                msg = cattleBack(beanForm);
+                break;
         }
        return msg;
     }
+
+    private String cattleBack(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
+        String userId = beanForm.getUserId();
+        //在数据库中查出玩家 并且删除玩家
+        String key = getKey(CacheKey.GROUP_ROOM_KEY,groupCode,roomCode);
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        Player minPlayer = null;
+        for(Player player:players){
+            if(player.getUserId()==Integer.parseInt(userId)){
+                minPlayer = player;
+                break;
+            }
+        }
+        players.remove(minPlayer);
+        //删除对话session
+        String websocketKey = getKey(CacheKey.WEBSOCKET_KEY,groupCode,roomCode);
+        CopyOnWriteArraySet<WebSocket> roomWebSocket = roomWebSockets.get(websocketKey);
+        if(roomWebSocket !=null && roomWebSocket.size()>0){
+            for(WebSocket sessionWebSocket:roomWebSocket){
+                ConcurrentMap<String,Session> sessionSet = sessionWebSocket.getSessionSet();
+                boolean isDel = false;
+                for(String sessionKey :sessionSet.keySet()){
+                    if(sessionKey.equals(userId)){
+                        sessionSet.remove(sessionKey);
+                        isDel = true;
+                        break;
+                    }
+                }
+                sessionWebSocket.setSessionSet(sessionSet);
+                if(isDel) break;
+            }
+        }
+        return JSON.toJSONString(players);
+    }
+
     public String clearGameData(BeanForm beanForm){
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();

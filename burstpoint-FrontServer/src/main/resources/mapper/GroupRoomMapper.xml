@@ -10,10 +10,12 @@
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="player_num" jdbcType="INTEGER" property="playerNum" />
+    <result column="base_score" jdbcType="INTEGER" property="baseScore" />
   </resultMap>
   <sql id="Base_Column_List">
     id, group_code, group_room_type, group_room_status,
-    create_time, create_by, update_time, update_by
+    create_time, create_by, update_time, update_by,playerNum,baseScore
   </sql>
 
 

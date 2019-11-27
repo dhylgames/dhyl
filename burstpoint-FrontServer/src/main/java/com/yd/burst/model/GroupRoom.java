@@ -24,6 +24,10 @@ public class GroupRoom extends BaseEntity{
 
     private List<User> groupUserList;
 
+    private int playerNum;
+
+    private int baseScore;
+
     public String getGroupCode() {
         return groupCode;
     }
@@ -46,6 +50,22 @@ public class GroupRoom extends BaseEntity{
 
     public void setGroupRoomStatus(String groupRoomStatus) {
         this.groupRoomStatus = groupRoomStatus;
+    }
+
+    public int getPlayerNum() {
+        return playerNum;
+    }
+
+    public void setPlayerNum(int playerNum) {
+        this.playerNum = playerNum;
+    }
+
+    public int getBaseScore() {
+        return baseScore;
+    }
+
+    public void setBaseScore(int baseScore) {
+        this.baseScore = baseScore;
     }
 
     public List<User> getGroupUserList() {

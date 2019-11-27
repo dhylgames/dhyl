@@ -12,6 +12,7 @@ public enum GameOperationEnum {
     CATTLE_DEAL(03, "发牌"),
     CATTLE_SHOW(04, "亮牌"),
     CATTLE_CALC_SCORE(05, "计算分"),
+    CATTLE_BACK(06, "退出"),
 
     //炸金花
     FGF_READY(11,"准备"),
@@ -21,8 +22,10 @@ public enum GameOperationEnum {
     FGF_COMPARE_CARD(15,"比牌"),
     FGF_DISCARD(16,"弃牌"),
     FGF_CALC_SCORE(17,"计算分"),
+    FGF_BACK(18, "退出"),
 
     GAME_AGAIN(00, "重新开始"),
+
     ;
 
 
