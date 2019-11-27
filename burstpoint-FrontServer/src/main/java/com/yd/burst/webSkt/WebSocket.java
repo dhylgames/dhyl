@@ -139,12 +139,19 @@ public class WebSocket implements Serializable {
             player.setUserId(Integer.parseInt(userId));
             players.add(player);
         }
+        //往群号添加结构
+        List<GroupRoom> roomList = (List<GroupRoom>) redisPool.getData4Object2Redis(CacheKey.GROUP_KEY+groupCode);
+        GroupRoom groupRoom = roomList.get(0);
+        for(int i=0;i<players.size();i++){
+             players.get(i).setPlayerNum(groupRoom.getPlayerNum());
+            players.get(i).setBaseScore(groupRoom.getBaseScore());
+        }
         redisPool.setData4Object2Redis(key, players);
-        setUserToRoom(players, groupCode, roomCode);
+        setUserToRoom(players, groupCode, roomCode,roomList);
 
     }
 
-    public void setUserToRoom(List<Player> players,String groupCode, String roomCode){
+    public void setUserToRoom(List<Player> players,String groupCode, String roomCode,List<GroupRoom> roomList){
         List<User> userList = new ArrayList<>();
         for(Player player:players){
             int userId = player.getUserId();
@@ -152,8 +159,6 @@ public class WebSocket implements Serializable {
             user.setPassword("");
             userList.add(user);
         }
-        //往群号添加结构
-        List<GroupRoom> roomList = (List<GroupRoom>) redisPool.getData4Object2Redis(CacheKey.GROUP_KEY+groupCode);
         for (GroupRoom room : roomList) {
             if (room.getId() == Integer.parseInt(roomCode)) {
                 room.setGroupUserList(userList);
