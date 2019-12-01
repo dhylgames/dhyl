@@ -117,4 +117,12 @@ public class RedisPool implements RedisUtil, Serializable {
     private void releaseJedis(Jedis jedis) {
         jedis.close();
     }
+
+
+    @Override
+    public void del() {
+        Jedis jedis = this.getJedis();
+        jedis.flushAll();
+        this.releaseJedis(jedis);
+    }
 }

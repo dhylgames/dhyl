@@ -37,6 +37,8 @@ public class InitGame implements ApplicationListener<ContextRefreshedEvent> {
     private GroupRoomMapper groupRoomMapper;
     //系统初始化时，初始化有些的群房间信息
     public void setGroupRoomInfo(){
+        //初始化 清除所有缓存
+        redisPool.del();
         //第一步，先查询数据库
        List<GroupRoom> roomList = groupRoomMapper.load();
        //按群号分组

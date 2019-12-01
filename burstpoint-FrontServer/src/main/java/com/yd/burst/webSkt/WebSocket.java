@@ -170,20 +170,23 @@ public class WebSocket implements Serializable {
         }
         if(!isNotExist){
             User user = userService.selectUserById(Integer.valueOf(userId));
-            user.setPassword("");
+            if(null!=user)
+            {
+                user.setPassword("");
           /*  roomList.stream().forEach(room->{ if (room.getId() == Integer.parseInt(roomCode)) {
                 userList.add(user);
                 room.setGroupUserList(userList);
                 String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
                 redisPool.setData4Object2Redis(key,roomList);
             }});*/
-            for (GroupRoom room : roomList) {
-                if (room.getId() == Integer.parseInt(roomCode)) {
-                    userList.add(user);
-                    room.setGroupUserList(userList);
-                    String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
-                    redisPool.setData4Object2Redis(key,userList);
-                    break;
+                for (GroupRoom room : roomList) {
+                    if (room.getId() == Integer.parseInt(roomCode)) {
+                        userList.add(user);
+                        room.setGroupUserList(userList);
+                        String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
+                        redisPool.setData4Object2Redis(key,userList);
+                        break;
+                    }
                 }
             }
         }
@@ -557,7 +560,9 @@ public class WebSocket implements Serializable {
          ConcurrentMap<String,Session> sessionSet = webSocket.getSessionSet();
          for(String key:sessionSet.keySet()){
              Session session = sessionSet.get(key);
+             if (session.isOpen()){
              session.getBasicRemote().sendText(message);
+             }
          }
      //this.session.getAsyncRemote().sendText(message);
      }

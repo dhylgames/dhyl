@@ -61,4 +61,9 @@ public class RedisCluster implements RedisUtil {
     public Object getData4Object2Redis(String key) {
         return null;
     }
+
+    @Override
+    public void del() {
+        jedisCluster.flushAll();
+    }
 }

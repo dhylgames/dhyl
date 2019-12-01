@@ -1,5 +1,7 @@
 package com.yd.burst.cache;
 
+import redis.clients.jedis.Jedis;
+
 /**
  * Redis工具接口
  *
@@ -77,4 +79,11 @@ public interface RedisUtil {
      * @return
      */
     Object getData4Object2Redis(String key);
+
+    /**
+     * 删除所有
+     *
+     *
+     */
+    void del();
 }
