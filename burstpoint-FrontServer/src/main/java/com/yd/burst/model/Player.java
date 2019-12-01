@@ -28,6 +28,10 @@ public class Player implements Serializable {
 
     private int IsWinAll; //通赢或通赔 0:普通  1:通赢 2:通赔
 
+    private int plateNum;
+
+    private int issue;
+
 
     public int getReadyState() {
         return readyState;
@@ -118,6 +122,14 @@ public class Player implements Serializable {
         IsWinAll = isWinAll;
     }
 
+    public int getPlateNum() {
+        return plateNum;
+    }
+
+    public void setPlateNum(int plateNum) {
+        this.plateNum = plateNum;
+    }
+
     public Poker getBiggestCards(Poker[] pocket) { // 获取手牌中的最大牌:有个问题没解决，如果出现点数相同，花色不同
         Poker poker = new Poker();
         int count = 0;
@@ -145,5 +157,13 @@ public class Player implements Serializable {
 
     public void setBaseScore(int baseScore) {
         this.baseScore = baseScore;
+    }
+
+    public int getIssue() {
+        return issue;
+    }
+
+    public void setIssue(int issue) {
+        this.issue = issue;
     }
 }

@@ -31,6 +31,8 @@ public class GameResult extends BaseEntity{
      */
     private String result;
 
+    private int plateNum;
+
     public String getGroupCode() {
         return groupCode;
     }
@@ -69,5 +71,13 @@ public class GameResult extends BaseEntity{
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public int getPlateNum() {
+        return plateNum;
+    }
+
+    public void setPlateNum(int plateNum) {
+        this.plateNum = plateNum;
     }
 }

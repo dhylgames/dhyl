@@ -4,30 +4,29 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yd.burst.cache.CacheKey;
 import com.yd.burst.cache.RedisPool;
+import com.yd.burst.common.Result;
 import com.yd.burst.controller.GroupInfoController;
+import com.yd.burst.enums.CodeEnum;
 import com.yd.burst.enums.GameOperationEnum;
+import com.yd.burst.enums.ICode;
 import com.yd.burst.game.CreatPoker;
 import com.yd.burst.game.NnCompare;
-import com.yd.burst.model.BeanForm;
-import com.yd.burst.model.GroupRoom;
-import com.yd.burst.model.Player;
-import com.yd.burst.model.User;
+import com.yd.burst.model.*;
 import com.yd.burst.service.GameResultService;
 import com.yd.burst.service.UserService;
-import org.apache.commons.collections.ArrayStack;
+import com.yd.burst.service.impl.GroupAmountService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -46,6 +45,9 @@ public class WebSocket implements Serializable {
 
     @Autowired
     private GameResultService gameResultService;
+
+    @Resource
+    private GroupAmountService groupAmountService;
 
     @Autowired
     private UserService userService;
@@ -103,22 +105,18 @@ public class WebSocket implements Serializable {
         try {
             String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
             List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
-            String playerStr = JSON.toJSONString(players);
+            List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
             //CopyOnWriteArraySet<WebSocket> roomWebSocket2 = roomWebSockets.get(websocketKey);
             for (WebSocket item : roomWebSocket) {
-                sendMessage(item,playerStr);
+                Map<String,Object> map = new HashMap<>();
+                map.put("userInfo",userList);
+                map.put("gameInfo",players);
+                sendMessage(item,JSON.toJSONString(map));
             }
           //  session.getBasicRemote().sendText("已连接");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-    }
-
-    public void addUserToRoom(String userId,String groupCode, String roomCode){
-        String key = CacheKey.GROUP_KEY + groupCode;
-
-
 
     }
 
@@ -147,23 +145,49 @@ public class WebSocket implements Serializable {
             players.get(i).setBaseScore(groupRoom.getBaseScore());
         }
         redisPool.setData4Object2Redis(key, players);
-        setUserToRoom(players, groupCode, roomCode,roomList);
+        setUserToRoom(players, groupCode, roomCode,roomList,userId);
 
     }
 
-    public void setUserToRoom(List<Player> players,String groupCode, String roomCode,List<GroupRoom> roomList){
-        List<User> userList = new ArrayList<>();
-        for(Player player:players){
-            int userId = player.getUserId();
-            User user = userService.selectUserById(userId);
-            user.setPassword("");
-            userList.add(user);
+    public void setUserToRoom(List<Player> players,String groupCode, String roomCode,List<GroupRoom> roomList,String userId){
+        //判断当前用户是存在
+        boolean isNotExist = false;
+     /*   for(Player player:players){
+            int curUserId = player.getUserId();
+            if(curUserId==Integer.valueOf(userId)){
+                isNotExist = true;
+            }
+        }*/
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        if(userList==null){
+            userList = new ArrayList<>();
         }
-        for (GroupRoom room : roomList) {
-            if (room.getId() == Integer.parseInt(roomCode)) {
-                room.setGroupUserList(userList);
+        for(User user:userList){
+            if(user.getId()==Integer.parseInt(userId)){
+                isNotExist = true;
+                break;
             }
         }
+        if(!isNotExist){
+            User user = userService.selectUserById(Integer.valueOf(userId));
+            user.setPassword("");
+          /*  roomList.stream().forEach(room->{ if (room.getId() == Integer.parseInt(roomCode)) {
+                userList.add(user);
+                room.setGroupUserList(userList);
+                String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
+                redisPool.setData4Object2Redis(key,roomList);
+            }});*/
+            for (GroupRoom room : roomList) {
+                if (room.getId() == Integer.parseInt(roomCode)) {
+                    userList.add(user);
+                    room.setGroupUserList(userList);
+                    String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
+                    redisPool.setData4Object2Redis(key,userList);
+                    break;
+                }
+            }
+        }
+
         redisPool.setData4Object2Redis(groupCode,roomList);
     }
 
@@ -182,10 +206,13 @@ public class WebSocket implements Serializable {
      *
      * @param message 客户端发送过来的消息*/
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message,  @PathParam("userId")String userId, @PathParam("groupCode")String groupCode, @PathParam("roomCode")String roomCode) {
         System.out.println("来自客户端的消息:" + message);
         JSONObject object = JSON.parseObject(message);
         BeanForm beanForm= object.toJavaObject(BeanForm.class);
+        beanForm.setUserId(userId);
+        beanForm.setGroupCode(groupCode);
+        beanForm.setRoomCode(roomCode);
         String websocketKey = getKey(CacheKey.WEBSOCKET_KEY,beanForm.getGroupCode(),beanForm.getRoomCode());
         logger.info("来自客户端的消息2:{}" ,object);
         CopyOnWriteArraySet<WebSocket> roomWebSocket = roomWebSockets.get(websocketKey);
@@ -304,6 +331,12 @@ public class WebSocket implements Serializable {
         String roomCode = beanForm.getRoomCode();
         //在数据库中查出玩家
         String key = getKey(CacheKey.GROUP_ROOM_KEY,groupCode,roomCode);
+        String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY,groupCode,roomCode);
+        String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY,groupCode,roomCode);
+        Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
+        Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
+        beanForm.setPlateNum(plateNum);
+        beanForm.setIssue(issue);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         NnCompare compare = new NnCompare();
         players = compare.compare(players);
@@ -350,13 +383,43 @@ public class WebSocket implements Serializable {
         return JSON.toJSONString(players);
     }
 
-    //牛牛抢庄
+    //牛牛抢庄,开始游戏
     private String cattleGrabBanker(BeanForm beanForm) {
+        //先判断是否钱足够，不够不让开局
+         boolean grupMoney = getGroupMoney(beanForm);
+         if(!grupMoney){
+           return JSON.toJSONString(JSON.toJSONString(Result.fail(CodeEnum.NOT_MONEY_GROUP_ROOM)));
+         }
+        //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();
+        String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY,groupCode,roomCode);
+        String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY,groupCode,roomCode);
+        Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
+        Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
+        if(issue==null){
+            issue = 1;
+        }
+        if(plateNum!=null){
+            if(plateNum==8){
+                plateNum = 1;
+                issue++;
+            }else{
+                plateNum ++;
+            }
+        }else{
+            plateNum = 1;
+        }
+        redisPool.setData4Object2Redis(issueKey,issue);
+        redisPool.setData4Object2Redis(plateKey,plateNum);
+
         //在数据库中查出这个用户
         String key = getKey(CacheKey.GROUP_ROOM_KEY,groupCode,roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        for(Player player:players){
+            player.setPlayerNum(plateNum);
+            player.setIssue(issue);
+        }
         //从玩家中随机一个做庄家
         int banker = 0;
         if(players.size()>0){
@@ -365,6 +428,22 @@ public class WebSocket implements Serializable {
         players.get(banker).setBanker(true);
         redisPool.setData4Object2Redis(key, players);
         return  JSON.toJSONString(players);
+    }
+
+    private boolean getGroupMoney(BeanForm beanForm) {
+        boolean isFullMoney=true;
+        GroupAmount amount = groupAmountService.selectGroupAmount(beanForm.getGroupCode());
+         double userAmount = Double.valueOf(amount.getGroupUserAmount());
+        if(userAmount<100){
+            //游戏必不足
+            isFullMoney = false;
+        }else{
+            userAmount = userAmount-10;
+            amount.setGroupUserAmount(String.valueOf(userAmount));
+            groupAmountService.updateGroupAmount(amount);
+        }
+
+        return isFullMoney;
     }
 
     //牛牛准备的逻辑

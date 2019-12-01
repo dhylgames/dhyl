@@ -52,4 +52,10 @@ public class CacheKey {
 
     public static final String WEBSOCKET_KEY = "WEBSOCKET_KEY_";
 
+    public static final String GROUP_ROOM_USER_KEY = "GROUP_ROOM_USER_KEY_";
+
+    public static final String GROUP_ROOM_ISSUE_KEY = "GROUP_ROOM_ISSUE_KEY_"; //当前期数
+
+    public static final String GROUP_ROOM_PLATENUM_KEY = "GROUP_ROOM_PLATENUM_KEY_"; //当前盘数
+
 }

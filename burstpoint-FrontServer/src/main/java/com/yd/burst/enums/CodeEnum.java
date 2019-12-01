@@ -19,6 +19,7 @@ public enum  CodeEnum implements ICode{
     ERROR_UPDATE_USER("1018", "修改错误"),
     ERROR_CODE("1027","token错误或者失效,请重新登入"),
     NOT_EXIST_GROUP_ROOM("1023", "群房间不存在"),
+    NOT_MONEY_GROUP_ROOM("1024", "群金额不足"),
     ;
 
     private String code;
