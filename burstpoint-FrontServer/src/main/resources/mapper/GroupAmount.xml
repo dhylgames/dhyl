@@ -24,7 +24,7 @@
   </select>
 
   <update id="updateGroupAmount" parameterType="com.yd.burst.model.GroupAmount"  keyProperty="id">
-    update table q_group_amount set group_user_amount = #{groupUserAmount,jdbcType=VARCHAR}
+    update  q_group_amount set group_user_amount = #{groupUserAmount,jdbcType=VARCHAR}
    where  group_code =  #{groupCode,jdbcType=VARCHAR}
   </update>
 

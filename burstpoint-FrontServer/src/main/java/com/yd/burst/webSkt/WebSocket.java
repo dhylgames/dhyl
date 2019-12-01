@@ -304,7 +304,11 @@ public class WebSocket implements Serializable {
                 if(isDel) break;
             }
         }
-        return JSON.toJSONString(players);
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        Map<String,Object> map = new HashMap<>();
+        map.put("userInfo",userList);
+        map.put("gameInfo",players);
+        return  JSON.toJSONString(map);
     }
 
     public String clearGameData(BeanForm beanForm){
@@ -340,10 +344,15 @@ public class WebSocket implements Serializable {
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         NnCompare compare = new NnCompare();
         players = compare.compare(players);
+        setIssueToPlayer(groupCode,roomCode,players);
         redisPool.setData4Object2Redis(key, players);
         //战绩插入数据库 做异步操作
         gameResultService.saveGameResult(players,beanForm);
-        return JSON.toJSONString(players);
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        Map<String,Object> map = new HashMap<>();
+        map.put("userInfo",userList);
+        map.put("gameInfo",players);
+        return  JSON.toJSONString(map);
     }
 
     //牛牛亮牌
@@ -366,7 +375,12 @@ public class WebSocket implements Serializable {
                 players.get(k).setBull(false);
             }
         }
-        return JSON.toJSONString(players);
+        setIssueToPlayer(groupCode,roomCode,players);
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        Map<String,Object> map = new HashMap<>();
+        map.put("userInfo",userList);
+        map.put("gameInfo",players);
+        return  JSON.toJSONString(map);
     }
 
     //牛牛发牌
@@ -378,9 +392,25 @@ public class WebSocket implements Serializable {
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         //创建牌
         players = new CreatPoker().CreatPoker(players);
+        setIssueToPlayer(groupCode,roomCode,players);
         //把牌写入redis
         redisPool.setData4Object2Redis(key, players);
-        return JSON.toJSONString(players);
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        Map<String,Object> map = new HashMap<>();
+        map.put("userInfo",userList);
+        map.put("gameInfo",players);
+        return  JSON.toJSONString(map);
+    }
+
+    private void setIssueToPlayer(String groupCode,String roomCode,List<Player> players){
+        String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY,groupCode,roomCode);
+        String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY,groupCode,roomCode);
+        Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
+        Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
+            for(int k=0;k<players.size();k++){
+                players.get(k).setPlateNum(plateNum);
+                players.get(k).setIssue(issue);
+            }
     }
 
     //牛牛抢庄,开始游戏
@@ -416,9 +446,9 @@ public class WebSocket implements Serializable {
         //在数据库中查出这个用户
         String key = getKey(CacheKey.GROUP_ROOM_KEY,groupCode,roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
-        for(Player player:players){
-            player.setPlayerNum(plateNum);
-            player.setIssue(issue);
+        for(int k=0;k<players.size();k++){
+            players.get(k).setPlateNum(plateNum);
+            players.get(k).setIssue(issue);
         }
         //从玩家中随机一个做庄家
         int banker = 0;
@@ -427,7 +457,11 @@ public class WebSocket implements Serializable {
         }
         players.get(banker).setBanker(true);
         redisPool.setData4Object2Redis(key, players);
-        return  JSON.toJSONString(players);
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        Map<String,Object> map = new HashMap<>();
+        map.put("userInfo",userList);
+        map.put("gameInfo",players);
+        return  JSON.toJSONString(map);
     }
 
     private boolean getGroupMoney(BeanForm beanForm) {
@@ -461,8 +495,16 @@ public class WebSocket implements Serializable {
                  player.setReadyState(1);
              }
          }
+
+        List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode));
+        //CopyOnWriteArraySet<WebSocket> roomWebSocket2 = roomWebSockets.get(websocketKey);
+
+            Map<String,Object> map = new HashMap<>();
+            map.put("userInfo",userList);
+            map.put("gameInfo",players);
+
         redisPool.setData4Object2Redis(key, players);
-        return  JSON.toJSONString(players);
+        return  JSON.toJSONString(map);
     }
 
     private String FGFPlay(BeanForm beanForm){

@@ -46,7 +46,7 @@ public class NnCompare {
         Player banker = null;
         List<Player> noBankerList = new ArrayList<>();
         for (Player player : list) {
-            if (player.getBanker()) {
+            if (null != player.getBanker() && player.getBanker()) {
                 banker = player;
             } else {
                 noBankerList.add(player);
