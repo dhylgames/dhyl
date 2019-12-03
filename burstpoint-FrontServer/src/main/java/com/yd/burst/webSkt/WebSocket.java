@@ -107,7 +107,6 @@ public class WebSocket implements Serializable {
             String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
             List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
             List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
-            //CopyOnWriteArraySet<WebSocket> roomWebSocket2 = roomWebSockets.get(websocketKey);
             for (WebSocket item : roomWebSocket) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("userInfo", userList);
@@ -153,12 +152,6 @@ public class WebSocket implements Serializable {
     public void setUserToRoom(List<Player> players, String groupCode, String roomCode, List<GroupRoom> roomList, String userId) {
         //判断当前用户是存在
         boolean isNotExist = false;
-     /*   for(Player player:players){
-            int curUserId = player.getUserId();
-            if(curUserId==Integer.valueOf(userId)){
-                isNotExist = true;
-            }
-        }*/
         List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
         if (userList == null) {
             userList = new ArrayList<>();
@@ -173,34 +166,17 @@ public class WebSocket implements Serializable {
             User user = userService.selectUserById(Integer.valueOf(userId));
             if (null != user) {
                 user.setPassword("");
-          /*  roomList.stream().forEach(room->{ if (room.getId() == Integer.parseInt(roomCode)) {
-                userList.add(user);
-                room.setGroupUserList(userList);
-                String key = getKey(CacheKey.GROUP_ROOM_USER_KEY,groupCode,roomCode);
-                redisPool.setData4Object2Redis(key,roomList);
-            }});*/
-          for(int jj=0;jj<roomList.size();jj++){
-              if(roomList.get(jj).getId()==Integer.parseInt(roomCode)){
-                  userList.add(user);
-                  roomList.get(jj).setGroupUserList(userList);
-                  String key = getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode);
-                  redisPool.setData4Object2Redis(key, userList);
-                  break;
-              }
-
-          }
-               /* for (GroupRoom room : roomList) {
-                    if (room.getId() == Integer.parseInt(roomCode)) {
+                for (int jj = 0; jj < roomList.size(); jj++) {
+                    if (roomList.get(jj).getId() == Integer.parseInt(roomCode)) {
                         userList.add(user);
-                        room.setGroupUserList(userList);
+                        roomList.get(jj).setGroupUserList(userList);
                         String key = getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode);
                         redisPool.setData4Object2Redis(key, userList);
                         break;
                     }
-                }*/
+                }
             }
         }
-
         redisPool.setData4Object2Redis(groupCode, roomList);
     }
 
