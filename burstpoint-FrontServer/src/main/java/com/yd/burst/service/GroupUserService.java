@@ -19,4 +19,8 @@ public interface GroupUserService {
     ICode auditUser(String userId, String status,String groupCode);
 
     ICode exitGroup(String userId, String groupCode);
+
+    GroupUser getGroupUserByGroupCode(String groupCode);
+
+    int updateGroupUserMoney(GroupUser groupUser);
 }

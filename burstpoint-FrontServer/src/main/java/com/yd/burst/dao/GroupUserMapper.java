@@ -21,4 +21,6 @@ public interface GroupUserMapper {
 
     int deleteGroupUserStatus(String groupCode);
     int deleteGroupUserStatusByUserId(@Param("groupCode")String  groupCode,@Param("groupUserId") String groupUserId);
+    GroupUser getGroupUserByGroupCode(@Param("groupCode")String  groupCode);
+    int updateGroupUserMoney(GroupUser groupUser);
 }

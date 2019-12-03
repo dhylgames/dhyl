@@ -72,12 +72,31 @@
         </if>
 
     </select>
+
+    <select id="getGroupUserByGroupCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from q_group_user
+        where group_user_type = '1'
+        <if test="groupCode!=null and groupCode!=''">
+            and group_code = #{groupCode,jdbcType=VARCHAR}
+        </if>
+    </select>
+
     <update id="deleteGroupUserStatus" parameterType="java.lang.String">
     update q_group_user
     set
       group_user_status = "3"
       where group_code = #{groupCode,jdbcType=VARCHAR}
   </update>
+
+    <update id="updateGroupUserMoney" parameterType="com.yd.burst.model.GroupUser">
+    update q_group_user
+    set
+      group_user_amount = #{groupUserAmount,jdbcType=VARCHAR}
+      where  group_user_type = '1' and group_code = #{groupCode,jdbcType=VARCHAR}
+  </update>
+
     <update id="deleteGroupUserStatusByUserId" parameterType="java.lang.String">
     update q_group_user
     set

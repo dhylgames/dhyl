@@ -127,5 +127,15 @@ public class GroupUserServiceImpl implements GroupUserService {
         }
         return code;
     }
+
+    @Override
+    public GroupUser getGroupUserByGroupCode(String groupCode) {
+        return groupUserMapper.getGroupUserByGroupCode(groupCode);
+    }
+
+    @Override
+    public int updateGroupUserMoney(GroupUser groupUser) {
+        return groupUserMapper.updateGroupUserMoney(groupUser);
+    }
 }
 
