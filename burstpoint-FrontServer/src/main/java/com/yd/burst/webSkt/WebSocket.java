@@ -277,6 +277,7 @@ public class WebSocket implements Serializable {
             }
         }
         players.remove(minPlayer);
+        redisPool.setData4Object2Redis(key,players);
         //删除对话session
         String websocketKey = getKey(CacheKey.WEBSOCKET_KEY, groupCode, roomCode);
         CopyOnWriteArraySet<WebSocket> roomWebSocket = roomWebSockets.get(websocketKey);
@@ -303,6 +304,7 @@ public class WebSocket implements Serializable {
                 break;
             }
         }
+        redisPool.setData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode),userList);
         Map<String, Object> map = new HashMap<>();
         map.put("userInfo", userList);
         map.put("gameInfo", players);
