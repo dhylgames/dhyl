@@ -19,6 +19,8 @@ public class CreatPoker {
     public List<Player> CreatPoker(List<Player> list) {
         for (int i = 0; i < list.size(); i++) {
           //每个人5张牌
+            Poker[] pokers = new Poker[5];
+            list.get(i).setPocket(pokers);
             for(int k=0;k<5;k++){
                 int randomColor = new Random().nextInt(3);
                 int randomPoint = new Random().nextInt(13);

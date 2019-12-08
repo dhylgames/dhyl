@@ -143,6 +143,7 @@ public class WebSocket implements Serializable {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setPlayerNum(groupRoom.getPlayerNum());
             players.get(i).setBaseScore(groupRoom.getBaseScore());
+            players.get(i).setPocket(null);
         }
         redisPool.setData4Object2Redis(key, players);
         setUserToRoom(players, groupCode, roomCode, roomList, userId);
@@ -405,6 +406,8 @@ public class WebSocket implements Serializable {
         String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
         Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
         Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
+        if(plateNum==null) plateNum = 1;
+        if(issue==null) issue = 1;
         for (int k = 0; k < players.size(); k++) {
             players.get(k).setPlateNum(plateNum);
             players.get(k).setIssue(issue);
@@ -465,6 +468,7 @@ public class WebSocket implements Serializable {
     private boolean getGroupMoney(BeanForm beanForm) {
         boolean isFullMoney = true;
         GroupUser user = GroupUserService.getGroupUserByGroupCode(beanForm.getGroupCode());
+        if(user==null) return false;
         double userAmount = Double.valueOf(user.getGroupUserAmount());
         if (userAmount < 100) {
             //游戏必不足

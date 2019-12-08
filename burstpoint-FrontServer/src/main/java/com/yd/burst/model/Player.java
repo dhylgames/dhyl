@@ -15,7 +15,7 @@ public class Player implements Serializable {
 
     private long waitTime; //等待时间
 
-    private Poker[] pocket = new Poker[5]; // 玩家手上的5张牌
+    private Poker[] pocket = null; // 玩家手上的5张牌
     private Boolean isBull = false; // 手牌是否有牛
     private int pointOfBull; // 牛几
     private Poker biggestCard; //最大点数
