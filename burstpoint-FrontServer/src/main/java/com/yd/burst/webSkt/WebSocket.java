@@ -426,6 +426,14 @@ public class WebSocket implements Serializable {
         //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();
+        //在数据库中查出这个用户
+        String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        for(Player player:players){
+            if(player.getBanker()){
+                return null; //如果已经抢过，直接返回
+            }
+        }
         String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY, groupCode, roomCode);
         String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
         Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
@@ -446,9 +454,6 @@ public class WebSocket implements Serializable {
         redisPool.setData4Object2Redis(issueKey, issue);
         redisPool.setData4Object2Redis(plateKey, plateNum);
 
-        //在数据库中查出这个用户
-        String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
-        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         for (int k = 0; k < players.size(); k++) {
             players.get(k).setPlateNum(plateNum);
             players.get(k).setIssue(issue);
