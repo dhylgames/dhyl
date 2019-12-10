@@ -15,6 +15,7 @@ public class BeanForm implements Serializable {
     private String roomCode;
     private int issue;
     private int plateNum;
+    private int annexNum;
 
     public String getPlayType() {
         return playType;
@@ -70,5 +71,13 @@ public class BeanForm implements Serializable {
 
     public void setPlateNum(int plateNum) {
         this.plateNum = plateNum;
+    }
+
+    public int getAnnexNum() {
+        return annexNum;
+    }
+
+    public void setAnnexNum(int annexNum) {
+        this.annexNum = annexNum;
     }
 }

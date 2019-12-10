@@ -32,6 +32,8 @@ public class Player implements Serializable {
 
     private int issue;
 
+    private int annexNum;
+
 
     public int getReadyState() {
         return readyState;
@@ -165,5 +167,13 @@ public class Player implements Serializable {
 
     public void setIssue(int issue) {
         this.issue = issue;
+    }
+
+    public int getAnnexNum() {
+        return annexNum;
+    }
+
+    public void setAnnexNum(int annexNum) {
+        this.annexNum = annexNum;
     }
 }

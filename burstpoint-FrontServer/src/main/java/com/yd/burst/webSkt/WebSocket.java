@@ -430,7 +430,7 @@ public class WebSocket implements Serializable {
         String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         for(Player player:players){
-            if(player.getBanker()){
+            if(null!=player.getBanker() && player.getBanker()){
                 return null; //如果已经抢过，直接返回
             }
         }
@@ -457,6 +457,7 @@ public class WebSocket implements Serializable {
         for (int k = 0; k < players.size(); k++) {
             players.get(k).setPlateNum(plateNum);
             players.get(k).setIssue(issue);
+            players.get(k).setAnnexNum(beanForm.getAnnexNum());
         }
         //从玩家中随机一个做庄家
         int banker = 0;
@@ -573,7 +574,7 @@ public class WebSocket implements Serializable {
         ConcurrentMap<String, Session> sessionSet = webSocket.getSessionSet();
         for (String key : sessionSet.keySet()) {
             Session session = sessionSet.get(key);
-            if (session.isOpen()) {
+            if (session.isOpen() && null != message) {
                 session.getBasicRemote().sendText(message);
             }
         }

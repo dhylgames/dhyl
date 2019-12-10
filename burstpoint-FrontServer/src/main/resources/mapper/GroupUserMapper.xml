@@ -77,7 +77,7 @@
         select
         <include refid="Base_Column_List"/>
         from q_group_user
-        where group_user_type = '1'
+        where group_user_type = '0'
         <if test="groupCode!=null and groupCode!=''">
             and group_code = #{groupCode,jdbcType=VARCHAR}
         </if>
