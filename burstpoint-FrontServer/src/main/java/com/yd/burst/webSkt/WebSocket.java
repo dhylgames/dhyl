@@ -429,11 +429,6 @@ public class WebSocket implements Serializable {
         //在数据库中查出这个用户
         String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
-        for(Player player:players){
-            if(null!=player.getBanker() && player.getBanker()){
-                return null; //如果已经抢过，直接返回
-            }
-        }
         String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY, groupCode, roomCode);
         String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
         Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
@@ -460,11 +455,20 @@ public class WebSocket implements Serializable {
             players.get(k).setAnnexNum(beanForm.getAnnexNum());
         }
         //从玩家中随机一个做庄家
-        int banker = 0;
-        if (players.size() > 0) {
-            banker = new Random().nextInt(players.size());
+        boolean isHaveBanker = false;
+        for(Player player:players){
+            if(null!=player.getBanker() && player.getBanker()){
+                isHaveBanker =  true; //如果已经抢过，直接返回
+            }
         }
-        players.get(banker).setBanker(true);
+        if(!isHaveBanker){
+            int banker = 0;
+            if (players.size() > 0) {
+                banker = new Random().nextInt(players.size());
+            }
+            players.get(banker).setBanker(true);
+        }
+
         redisPool.setData4Object2Redis(key, players);
         List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
         Map<String, Object> map = new HashMap<>();
@@ -574,11 +578,12 @@ public class WebSocket implements Serializable {
         ConcurrentMap<String, Session> sessionSet = webSocket.getSessionSet();
         for (String key : sessionSet.keySet()) {
             Session session = sessionSet.get(key);
-            if (session.isOpen() && null != message) {
-                session.getBasicRemote().sendText(message);
+            synchronized (session) {
+                if (session.isOpen() && null != message) {
+                    session.getAsyncRemote().sendText(message);
+                }
             }
         }
-        //this.session.getAsyncRemote().sendText(message);
     }
 
 
