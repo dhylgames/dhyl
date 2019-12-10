@@ -82,7 +82,7 @@ public class GroupUserController {
             groupUser.setGroupCode(groupCode);
             groupUser.setGroupUserId(userId);
             groupUser.setGroupUserStatus("0");
-            groupUser.setGroupUserType("0");
+            groupUser.setGroupUserType("1");
             ICode str = groupUserService.addGroupUser(groupUser);
             if (CodeEnum.SUCCESS.getCode().equals(str.getCode())) {
                 return Result.success();
@@ -113,8 +113,10 @@ public class GroupUserController {
         if(phone.equals(JWTUtil.decode(token))) {
             GroupUser groupUser = new GroupUser();
             groupUser.setGroupCode(groupCode);
+            //状态  0-待审核 1-通过 2-拒绝
             groupUser.setGroupUserStatus("0");
-            groupUser.setGroupUserType("0");
+            //类型 0-群主 1-群成员
+            groupUser.setGroupUserType("1");
             Object object = groupUserService.findGroupUsers(groupUser);
             String groupName = groupInfoService.getGroupName(groupCode);
             if (object instanceof List) {
