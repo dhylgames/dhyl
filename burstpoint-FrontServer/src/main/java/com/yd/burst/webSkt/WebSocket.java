@@ -430,7 +430,7 @@ public class WebSocket implements Serializable {
         String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         for(Player player:players){
-            if(player.getBanker()){
+            if(null!=player.getBanker()&&player.getBanker()){
                 return null; //如果已经抢过，直接返回
             }
         }
