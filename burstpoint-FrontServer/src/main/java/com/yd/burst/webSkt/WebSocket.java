@@ -146,6 +146,7 @@ public class WebSocket implements Serializable {
             players.get(i).setPocket(null);
         }
         redisPool.setData4Object2Redis(key, players);
+
         setUserToRoom(players, groupCode, roomCode, roomList, userId);
 
     }
@@ -343,6 +344,7 @@ public class WebSocket implements Serializable {
         beanForm.setPlateNum(plateNum);
         beanForm.setIssue(issue);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        setResultTo5(players);
         NnCompare compare = new NnCompare();
         players = compare.compare(players);
         setIssueToPlayer(groupCode, roomCode, players);
@@ -356,14 +358,7 @@ public class WebSocket implements Serializable {
         return JSON.toJSONString(map);
     }
 
-    //牛牛亮牌
-    private String cattleShowCard(BeanForm beanForm) {
-        String groupCode = beanForm.getGroupCode();
-        String roomCode = beanForm.getRoomCode();
-        //在数据库中查出这个用户
-        String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
-        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
-        //手相判断是否有牛
+    private void setResultTo5(List<Player> players){
         for (int k = 0; k < players.size(); k++) {
             Player player = players.get(k);
             NnCompare compare = new NnCompare();
@@ -375,8 +370,21 @@ public class WebSocket implements Serializable {
                 players.get(k).setNnResult("牛"+nNum);
             } else {
                 players.get(k).setBull(false);
+                players.get(k).setNnResult("无牛");
             }
         }
+    }
+
+
+    //牛牛亮牌
+    private String cattleShowCard(BeanForm beanForm) {
+        String groupCode = beanForm.getGroupCode();
+        String roomCode = beanForm.getRoomCode();
+        //在数据库中查出这个用户
+        String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
+        List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        //手相判断是否有牛
+        setResultTo5(players);
         setIssueToPlayer(groupCode, roomCode, players);
         List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
         Map<String, Object> map = new HashMap<>();
