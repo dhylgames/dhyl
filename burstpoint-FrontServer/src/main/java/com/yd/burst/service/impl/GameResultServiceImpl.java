@@ -44,7 +44,7 @@ public class GameResultServiceImpl implements GameResultService {
             gameResult.setGroupCode(beanForm.getGroupCode());
             gameResult.setGroupRoomId(beanForm.getRoomCode());
             gameResult.setGroupUserId(beanForm.getUserId());
-            gameResult.setResult(String.valueOf(player.getScore()));
+            gameResult.setResult(String.valueOf(player.getTotalScore()));
             gameResult.setIssue(beanForm.getIssue());
             gameResult.setPlateNum(beanForm.getPlateNum());
             SimpleDateFormat sdf = new SimpleDateFormat(StaticRource.DATEFORMATE);

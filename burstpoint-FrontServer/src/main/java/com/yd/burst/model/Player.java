@@ -37,7 +37,7 @@ public class Player implements Serializable {
 
     private int annexNum;
 
-    private String nnResult;
+    private String nnResult; //牛几
 
 
     public int getReadyState() {
