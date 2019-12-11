@@ -48,21 +48,9 @@ public class InitGame implements ApplicationListener<ContextRefreshedEvent> {
             //第二步，查出来的数据存入redis
             String key = CacheKey.GROUP_KEY + groupCode;
             redisPool.setData4Object2Redis(key,list);
-
-           /*for(GroupRoom groupRoom:list){ //房间
-               List<Player> players = new ArrayList<>();
-               String key2 = CacheKey.GROUP_ROOM_KEY+11;
-               redisPool.setData4Object2Redis(key2,players);
-            }*/
         }
 
-        /*List<Player> players = new ArrayList<>();
-        Player player = new Player();
-        player.setUserId(1);
-        player.setReadyState(0);
-        players.add(player);
-        String key2 = CacheKey.GROUP_ROOM_KEY+11;
-        redisPool.setData4Object2Redis(key2,players);*/
+
     }
 
     @Override

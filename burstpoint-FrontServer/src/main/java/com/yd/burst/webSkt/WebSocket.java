@@ -320,7 +320,7 @@ public class WebSocket implements Serializable {
         List<Player> newPlayers = new ArrayList<>();
         for (Player player : players) {
             player.setPocket(null);
-            player.setScore(0);
+            player.setTotalScore(0);
             player.setIsWinAll(0);
             player.setPointOfBull(0);
             player.setBanker(false);
@@ -372,6 +372,7 @@ public class WebSocket implements Serializable {
                 players.get(k).setBull(true);
                 int nNum = compare.pointOfBull(player);
                 players.get(k).setPointOfBull(nNum);
+                players.get(k).setNnResult("牛"+nNum);
             } else {
                 players.get(k).setBull(false);
             }
@@ -583,6 +584,7 @@ public class WebSocket implements Serializable {
                     session.getAsyncRemote().sendText(message);
                 }
             }
+
         }
     }
 

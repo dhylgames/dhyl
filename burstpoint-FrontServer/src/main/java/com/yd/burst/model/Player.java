@@ -20,7 +20,10 @@ public class Player implements Serializable {
     private int pointOfBull; // 牛几
     private Poker biggestCard; //最大点数
     private Boolean isBanker;  //是否庄家
-    private long score;  //当局输赢分数
+
+    private long totalScore = 0;  //总分数
+
+    private long oneScore = 0;//当局输赢分数
 
     private int playerNum;
 
@@ -33,6 +36,8 @@ public class Player implements Serializable {
     private int issue;
 
     private int annexNum;
+
+    private String nnResult;
 
 
     public int getReadyState() {
@@ -108,12 +113,20 @@ public class Player implements Serializable {
         this.biggestCard = biggestCard;
     }
 
-    public long getScore() {
-        return score;
+    public long getTotalScore() {
+        return totalScore;
     }
 
-    public void setScore(long score) {
-        this.score = score;
+    public void setTotalScore(long totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public long getOneScore() {
+        return oneScore;
+    }
+
+    public void setOneScore(long oneScore) {
+        this.oneScore = oneScore;
     }
 
     public int getIsWinAll() {
@@ -130,6 +143,14 @@ public class Player implements Serializable {
 
     public void setPlateNum(int plateNum) {
         this.plateNum = plateNum;
+    }
+
+    public String getNnResult() {
+        return nnResult;
+    }
+
+    public void setNnResult(String nnResult) {
+        this.nnResult = nnResult;
     }
 
     public Poker getBiggestCards(Poker[] pocket) { // 获取手牌中的最大牌:有个问题没解决，如果出现点数相同，花色不同

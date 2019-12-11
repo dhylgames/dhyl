@@ -57,29 +57,42 @@ public class NnCompare {
             if (banker.getBull() && player.getBull()) {
                 if (banker.getPointOfBull() > player.getPointOfBull()) {
                     // 如果庄家牛大，则赢得分
-                    banker.setScore(banker.getScore() + player.getScore());
-                    player.setScore(-player.getScore());
+                    banker.setTotalScore(banker.getTotalScore() + player.getBaseScore()); //之后要乘倍数
+                    banker.setOneScore(banker.getOneScore() + player.getBaseScore());
+                    player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+                    player.setOneScore(-player.getBaseScore());
                     winNum ++;
                 } else if (banker.getPointOfBull() < player.getPointOfBull()) {
-                    banker.setScore(-player.getScore());
+                    banker.setTotalScore(banker.getTotalScore()-player.getBaseScore());
+                    banker.setOneScore(banker.getOneScore()-player.getBaseScore());
+                    player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+                    player.setOneScore(-player.getBaseScore());
                     winNum --;
-                    // player.setScore(-player.getScore());
+                    //
                 } else {                                   // 如果牛的点数相同，则比较最大牌
                     if (banker.getBiggestCard().getCount() > player.getBiggestCard().getCount()) {
-                        banker.setScore(banker.getScore() + player.getScore());
-                        player.setScore(-player.getScore());
+                        banker.setTotalScore(banker.getTotalScore() + player.getBaseScore());
+                        banker.setOneScore(banker.getOneScore()+player.getBaseScore());
+                        player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+                        player.setOneScore(-player.getBaseScore());
                         winNum ++;
                     } else {
-                        banker.setScore(-player.getScore());
+                        banker.setTotalScore(-player.getBaseScore());
+                        banker.setOneScore(banker.getOneScore()-player.getBaseScore());
                         winNum --;
                     }
                 }
             } else if (banker.getBull() && !player.getBull()) {
-                banker.setScore(banker.getScore() + player.getScore());
-                player.setScore(-player.getScore());
+                banker.setTotalScore(banker.getTotalScore() + player.getBaseScore());
+                banker.setOneScore(banker.getOneScore() + player.getBaseScore());
+                player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+                player.setOneScore(-player.getBaseScore());
                 winNum ++;
             } else if (!banker.getBull() && player.getBull()) {
-                banker.setScore(-player.getScore());
+                banker.setTotalScore(banker.getTotalScore()-player.getBaseScore());
+                banker.setOneScore(banker.getOneScore()-player.getBaseScore());
+                player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+                player.setOneScore(-player.getBaseScore());
                 winNum --;
             } else if (!banker.getBull() && !player.getBull()) {
                 //都无牛的情况
