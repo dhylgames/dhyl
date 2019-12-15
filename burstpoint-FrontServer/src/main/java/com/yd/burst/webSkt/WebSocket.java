@@ -101,7 +101,6 @@ public class WebSocket implements Serializable {
         roomWebSocket.add(this);     //分组的，加入set中
         webSocketSet.add(this); //全局的
         roomWebSockets.put(websocketKey, roomWebSocket);
-        //  addOnlineCount();           //在线数加1
         logger.info("有新连接加入！当前在线人数:" + this.onlineCount);
         try {
             String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
@@ -113,7 +112,6 @@ public class WebSocket implements Serializable {
                 map.put("gameInfo", players);
                 sendMessage(item, JSON.toJSONString(map));
             }
-            //  session.getBasicRemote().sendText("已连接");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -235,28 +233,23 @@ public class WebSocket implements Serializable {
         switch (gameOperationEnum) {
             case CATTLE_READY://准备
                 msg = cattleReadyOp(beanForm);
-                // System.out.println(msg);
                 break;
             case CATTLE_GRAB_BANKER: //抢庄
                 msg = cattleGrabBanker(beanForm);
-                //  System.out.println(msg);
                 break;
             case CATTLE_DEAL://发牌
                 msg = sendPoker(beanForm);
-                //  System.out.println(msg);
                 break;
             case CATTLE_SHOW://亮牌
                 msg = cattleShowCard(beanForm);
-                //  System.out.println(msg);
                 break;
             case CATTLE_CALC_SCORE: //计算分
                 msg = cattleCalcScore(beanForm);
-                //  System.out.println(msg);
                 break;
-            case GAME_AGAIN:
+            case GAME_AGAIN: //重新开始
                 msg = clearGameData(beanForm);
                 break;
-            case CATTLE_BACK:
+            case CATTLE_BACK: //离开
                 msg = cattleBack(beanForm);
                 break;
         }
@@ -312,6 +305,17 @@ public class WebSocket implements Serializable {
         return JSON.toJSONString(map);
     }
 
+    private void playAgain( List<Player> players){
+        for (Player player : players) {
+            player.setPocket(null);
+            player.setOneScore(0);
+            player.setIsWinAll(0);
+            player.setPointOfBull(0);
+            player.setReadyState(0);
+            player.setBanker(false);
+        }
+    }
+
     public String clearGameData(BeanForm beanForm) {
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();
@@ -321,9 +325,10 @@ public class WebSocket implements Serializable {
         List<Player> newPlayers = new ArrayList<>();
         for (Player player : players) {
             player.setPocket(null);
-            player.setTotalScore(0);
+            player.setOneScore(0);
             player.setIsWinAll(0);
             player.setPointOfBull(0);
+            player.setReadyState(0);
             player.setBanker(false);
             newPlayers.add(player);
         }
@@ -348,13 +353,15 @@ public class WebSocket implements Serializable {
         NnCompare compare = new NnCompare();
         players = compare.compare(players);
         setIssueToPlayer(groupCode, roomCode, players);
-        redisPool.setData4Object2Redis(key, players);
         //战绩插入数据库 做异步操作
         gameResultService.saveGameResult(players, beanForm);
         List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
         Map<String, Object> map = new HashMap<>();
         map.put("userInfo", userList);
         map.put("gameInfo", players);
+        //redis 重新玩家充值
+        playAgain(players);
+        redisPool.setData4Object2Redis(key, players);
         return JSON.toJSONString(map);
     }
 

@@ -54,45 +54,29 @@ public class NnCompare {
         }
         //把不是庄家的玩家和庄家进行比较，然后计算得分
         for (Player player : noBankerList) {
-            if (banker.getBull() && player.getBull()) {
+            if (banker.getBull() && player.getBull()) {//如果有牛
                 if (banker.getPointOfBull() > player.getPointOfBull()) {
                     // 如果庄家牛大，则赢得分
-                    banker.setTotalScore(banker.getTotalScore() + player.getBaseScore()); //之后要乘倍数
-                    banker.setOneScore(banker.getOneScore() + player.getBaseScore());
-                    player.setTotalScore(player.getTotalScore()-player.getBaseScore());
-                    player.setOneScore(-player.getBaseScore());
+                    bankerWin(banker,player);
                     winNum ++;
                 } else if (banker.getPointOfBull() < player.getPointOfBull()) {
-                    banker.setTotalScore(banker.getTotalScore()-player.getBaseScore());
-                    banker.setOneScore(banker.getOneScore()-player.getBaseScore());
-                    player.setTotalScore(player.getTotalScore()-player.getBaseScore());
-                    player.setOneScore(-player.getBaseScore());
+                    bankerLose(banker,player);
                     winNum --;
                     //
                 } else {                                   // 如果牛的点数相同，则比较最大牌
                     if (banker.getBiggestCard().getCount() > player.getBiggestCard().getCount()) {
-                        banker.setTotalScore(banker.getTotalScore() + player.getBaseScore());
-                        banker.setOneScore(banker.getOneScore()+player.getBaseScore());
-                        player.setTotalScore(player.getTotalScore()-player.getBaseScore());
-                        player.setOneScore(-player.getBaseScore());
+                        bankerWin(banker,player);
                         winNum ++;
                     } else {
-                        banker.setTotalScore(-player.getBaseScore());
-                        banker.setOneScore(banker.getOneScore()-player.getBaseScore());
+                        bankerLose(banker,player);
                         winNum --;
                     }
                 }
             } else if (banker.getBull() && !player.getBull()) {
-                banker.setTotalScore(banker.getTotalScore() + player.getBaseScore());
-                banker.setOneScore(banker.getOneScore() + player.getBaseScore());
-                player.setTotalScore(player.getTotalScore()-player.getBaseScore());
-                player.setOneScore(-player.getBaseScore());
+                bankerWin(banker,player);
                 winNum ++;
             } else if (!banker.getBull() && player.getBull()) {
-                banker.setTotalScore(banker.getTotalScore()-player.getBaseScore());
-                banker.setOneScore(banker.getOneScore()-player.getBaseScore());
-                player.setTotalScore(player.getTotalScore()-player.getBaseScore());
-                player.setOneScore(-player.getBaseScore());
+                bankerLose(banker,player);
                 winNum --;
             } else if (!banker.getBull() && !player.getBull()) {
                 //都无牛的情况
@@ -108,6 +92,20 @@ public class NnCompare {
         }
         newList.add(banker);
         return newList;
+    }
+
+    private void bankerWin(Player banker,Player player){
+        banker.setTotalScore(banker.getTotalScore() + player.getBaseScore()); //之后要乘倍数
+        banker.setOneScore(banker.getOneScore() + player.getBaseScore());
+        player.setTotalScore(player.getTotalScore()-player.getBaseScore());
+        player.setOneScore(-player.getBaseScore());
+    }
+
+    private void bankerLose(Player banker,Player player){
+        banker.setTotalScore(banker.getTotalScore()- player.getBaseScore()); //之后要乘倍数
+        banker.setOneScore(banker.getOneScore() - player.getBaseScore());
+        player.setTotalScore(player.getTotalScore()+player.getBaseScore());
+        player.setOneScore(player.getBaseScore());
     }
 
 }
