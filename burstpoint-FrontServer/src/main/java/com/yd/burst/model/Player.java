@@ -35,7 +35,9 @@ public class Player implements Serializable {
 
     private int issue;
 
-    private int annexNum;
+    private int annexNum; //倍数
+
+    private int finallyAnnexNum; //最终倍数
 
     private String nnResult; //牛几
 

@@ -439,7 +439,6 @@ public class WebSocket implements Serializable {
         if (!grupMoney) {
             return JSON.toJSONString(JSON.toJSONString(Result.fail(CodeEnum.NOT_MONEY_GROUP_ROOM)));
         }
-        //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();
         //在数据库中查出这个用户
@@ -448,6 +447,7 @@ public class WebSocket implements Serializable {
         String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY, groupCode, roomCode);
         String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
         Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
+        //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
         Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
         if (issue == null) {
             issue = 1;
@@ -491,6 +491,26 @@ public class WebSocket implements Serializable {
         map.put("userInfo", userList);
         map.put("gameInfo", players);
         return JSON.toJSONString(map);
+    }
+
+    /**
+     * 设置牛牛的庄家，谁的倍数大，谁是庄家，如果相同倍数的，从中随机一个做庄家
+     */
+    private void setNNBanker(List<Player> players,BeanForm beanForm){
+        //
+        for(Player player :players){
+            if(player.getUserId() == Integer.valueOf(beanForm.getUserId())){
+                player.setAnnexNum(beanForm.getAnnexNum());
+                break;
+            }
+        }
+        //把当前已经抢庄的最大倍数返回没一个玩家
+
+
+        //所有玩家全部抢庄之后，返回庄家
+
+
+
     }
 
     private boolean getGroupMoney(BeanForm beanForm) {
