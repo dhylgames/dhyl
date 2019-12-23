@@ -360,8 +360,31 @@ public class WebSocket implements Serializable {
         map.put("userInfo", userList);
         map.put("gameInfo", players);
         //redis 重新玩家充值
-        playAgain(players);
-        redisPool.setData4Object2Redis(key, players);
+        List<Player> playerTwo = new ArrayList<>();
+        for(int i=0;i<players.size();i++){
+            Player player_new=new Player();
+            player_new.setIssue(players.get(i).getIssue());
+            player_new.setPlateNum(players.get(i).getPlateNum());
+            player_new.setOneScore(players.get(i).getOneScore());
+            player_new.setIsWinAll(players.get(i).getIsWinAll());
+            player_new.setPocket(players.get(i).getPocket());
+            player_new.setTotalScore(players.get(i).getTotalScore());
+            player_new.setBanker(players.get(i).getBanker());
+            player_new.setPointOfBull(players.get(i).getPointOfBull());
+            player_new.setReadyState(players.get(i).getReadyState());
+            player_new.setBull(players.get(i).getBull());
+            player_new.setNnResult(players.get(i).getNnResult());
+            player_new.setAnnexNum(players.get(i).getAnnexNum());
+            player_new.setBaseScore(players.get(i).getBaseScore());
+           // player_new.setOneOfPocket(players.get(i));
+            player_new.setPlayerNum(players.get(i).getPlayerNum());
+            player_new.setUserId(players.get(i).getUserId());
+            player_new.setBiggestCard(players.get(i).getBiggestCard());
+            player_new.setWaitTime(players.get(i).getWaitTime());
+            playerTwo.add((player_new));
+        }
+        playAgain(playerTwo);
+        redisPool.setData4Object2Redis(key, playerTwo);
         return JSON.toJSONString(map);
     }
 
