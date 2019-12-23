@@ -199,4 +199,15 @@ public class Player implements Serializable {
     public void setAnnexNum(int annexNum) {
         this.annexNum = annexNum;
     }
+
+    public Object clone(){
+        Object o =null;
+        try{
+            o = (Player) super.clone();
+        }catch (CloneNotSupportedException e){
+           System.out.println(e.toString());
+        }
+       return o;
+    }
+
 }
