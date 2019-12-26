@@ -35,12 +35,9 @@ public class Player implements Serializable {
 
     private int issue;
 
-    private int annexNum; //倍数
-
-    private int finallyAnnexNum; //最终倍数
+    private Integer annexNum; //倍数
 
     private String nnResult; //牛几
-
 
     public int getReadyState() {
         return readyState;
@@ -192,11 +189,11 @@ public class Player implements Serializable {
         this.issue = issue;
     }
 
-    public int getAnnexNum() {
+    public Integer getAnnexNum() {
         return annexNum;
     }
 
-    public void setAnnexNum(int annexNum) {
+    public void setAnnexNum(Integer annexNum) {
         this.annexNum = annexNum;
     }
 

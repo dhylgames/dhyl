@@ -467,46 +467,8 @@ public class WebSocket implements Serializable {
         //在数据库中查出这个用户
         String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
-        String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY, groupCode, roomCode);
-        String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
-        Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
-        //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
-        Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
-        if (issue == null) {
-            issue = 1;
-        }
-        if (plateNum != null) {
-            if (plateNum == 8) {
-                plateNum = 1;
-                issue++;
-            } else {
-                plateNum++;
-            }
-        } else {
-            plateNum = 1;
-        }
-        redisPool.setData4Object2Redis(issueKey, issue);
-        redisPool.setData4Object2Redis(plateKey, plateNum);
-
-        for (int k = 0; k < players.size(); k++) {
-            players.get(k).setPlateNum(plateNum);
-            players.get(k).setIssue(issue);
-            players.get(k).setAnnexNum(beanForm.getAnnexNum());
-        }
-        //从玩家中随机一个做庄家
-        boolean isHaveBanker = false;
-        for(Player player:players){
-            if(null!=player.getBanker() && player.getBanker()){
-                isHaveBanker =  true; //如果已经抢过，直接返回
-            }
-        }
-        if(!isHaveBanker){
-            int banker = 0;
-            if (players.size() > 0) {
-                banker = new Random().nextInt(players.size());
-            }
-            players.get(banker).setBanker(true);
-        }
+        //从玩家中随机一个做庄家,并设置盘数和局数
+        setNNBanker(players,beanForm);
 
         redisPool.setData4Object2Redis(key, players);
         List<User> userList = (List<User>) redisPool.getData4Object2Redis(getKey(CacheKey.GROUP_ROOM_USER_KEY, groupCode, roomCode));
@@ -520,19 +482,68 @@ public class WebSocket implements Serializable {
      * 设置牛牛的庄家，谁的倍数大，谁是庄家，如果相同倍数的，从中随机一个做庄家
      */
     private void setNNBanker(List<Player> players,BeanForm beanForm){
-        //
+        String plateKey = getKey(CacheKey.GROUP_ROOM_PLATENUM_KEY, beanForm.getGroupCode(), beanForm.getRoomCode());
+        String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, beanForm.getGroupCode(), beanForm.getRoomCode());
+        Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
+        //获取当前局数，从reids获取，如果没有获取到，则表示第一局，如果是8，则从下一期开始
+        Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
+        if (issue == null) {
+            issue = 1;
+        }
+        if(null == plateNum){
+            plateNum = 1;
+        }
+        int haveBanker = 0;
+        int playerNum = players.get(0).getPlayerNum();
         for(Player player :players){
+            player.setPlateNum(plateNum);
+            player.setIssue(issue);
             if(player.getUserId() == Integer.valueOf(beanForm.getUserId())){
                 player.setAnnexNum(beanForm.getAnnexNum());
-                break;
+                haveBanker++;
+            }else{
+                if(player.getAnnexNum()!=null){
+                    haveBanker++;
+                }
             }
         }
-        //把当前已经抢庄的最大倍数返回没一个玩家
-
-
-        //所有玩家全部抢庄之后，返回庄家
-
-
+        //所有玩家全部抢庄之后，才会产生庄家
+        if(haveBanker == playerNum){ //说明所有玩家都已经抢庄
+            //找出一个做庄家，先找出最大倍数的玩家,
+            players.sort((a,b)->b.getAnnexNum().compareTo(a.getAnnexNum())); //降序处理
+            List<Player> maxAnnexNumList = new ArrayList<>(); //存储最大倍数的玩家
+            maxAnnexNumList.add(players.get(0));
+            int annexNum = players.get(0).getAnnexNum();
+            for(int i=1;i<players.size();i++){ //从第二个开始排序
+                if(annexNum==players.get(i).getAnnexNum()){
+                    maxAnnexNumList.add(players.get(i));
+                }
+            }
+            int banker = new Random().nextInt(maxAnnexNumList.size());
+            maxAnnexNumList.get(banker).setBanker(true);
+            int bankerUserId = 0;
+            for(Player player:maxAnnexNumList){
+                if(player.getBanker()){
+                    bankerUserId = player.getUserId();
+                    break;
+                }
+            }
+            for(Player player:players){ //最终设置庄家
+                if(bankerUserId==player.getUserId()){
+                    player.setBanker(true);
+                    break;
+                }
+            }
+          //盘数增加
+           if (plateNum == 8) {
+               plateNum = 1;
+               issue++;
+           } else {
+               plateNum++;
+           }
+           redisPool.setData4Object2Redis(issueKey, issue);
+           redisPool.setData4Object2Redis(plateKey, plateNum);
+        }
 
     }
 
