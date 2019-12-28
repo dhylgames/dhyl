@@ -346,8 +346,12 @@ public class WebSocket implements Serializable {
         String issueKey = getKey(CacheKey.GROUP_ROOM_ISSUE_KEY, groupCode, roomCode);
         Integer plateNum = (Integer) redisPool.getData4Object2Redis(plateKey);
         Integer issue = (Integer) redisPool.getData4Object2Redis(issueKey);
-        beanForm.setPlateNum(plateNum);
-        beanForm.setIssue(issue);
+        if(plateNum!=null){
+            beanForm.setPlateNum(plateNum);
+        }
+        if(issue!=null){
+            beanForm.setIssue(issue);
+        }
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
         setResultTo5(players);
         NnCompare compare = new NnCompare();
