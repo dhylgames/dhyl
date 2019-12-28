@@ -54,7 +54,7 @@ public class NnCompare {
         }
         //把不是庄家的玩家和庄家进行比较，然后计算得分
         for (Player player : noBankerList) {
-            if (banker.getBull() && player.getBull()) {//如果有牛
+            if (banker.getBull()!=null && player.getBull()) {//如果有牛
                 if (banker.getPointOfBull() > player.getPointOfBull()) {
                     // 如果庄家牛大，则赢得分
                     bankerWin(banker,player);
