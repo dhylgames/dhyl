@@ -39,6 +39,8 @@ public class Player implements Serializable {
 
     private String nnResult; //牛几
 
+    private boolean haveBanker;
+
     public int getReadyState() {
         return readyState;
     }

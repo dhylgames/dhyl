@@ -429,11 +429,21 @@ public class WebSocket implements Serializable {
 
     //牛牛发牌
     private String sendPoker(BeanForm beanForm) {
+
         String groupCode = beanForm.getGroupCode();
         String roomCode = beanForm.getRoomCode();
         //在数据库中查出这个用户
         String key = getKey(CacheKey.GROUP_ROOM_KEY, groupCode, roomCode);
         List<Player> players = (List<Player>) redisPool.getData4Object2Redis(key);
+        boolean isBanker = false;
+        for(Player player:players){
+            if(player.getUserId() == Integer.valueOf(beanForm.getUserId())){
+              if(player.getBanker()){
+                  isBanker = true;
+              }
+            }
+        }
+        if(!isBanker) return null;
         //创建牌
         players = new CreatPoker().CreatPoker(players);
         setIssueToPlayer(groupCode, roomCode, players);
@@ -649,6 +659,7 @@ public class WebSocket implements Serializable {
 
 
     public void sendMessage(WebSocket webSocket, String message) throws IOException {
+        if(message==null) return;
         ConcurrentMap<String, Session> sessionSet = webSocket.getSessionSet();
         for (String key : sessionSet.keySet()) {
             Session session = sessionSet.get(key);
